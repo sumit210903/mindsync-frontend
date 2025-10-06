@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindSync - Community</title>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {margin:0; padding:0; box-sizing:border-box; font-family:'Quicksand',sans-serif;}
+    body {background: linear-gradient(135deg,#dff6f0,#b9e5e8,#a7c7e7); color:#2c3e50; min-height:100vh;}
+
+    /* Navbar */
+    nav {
+      background: rgba(255,255,255,0.95);
+      padding: 15px 8%;
+      display:flex; justify-content:space-between; align-items:center;
+      position:sticky; top:0; z-index:1000;
+      box-shadow:0 2px 8px rgba(0,0,0,0.08);
+    }
+    nav h1 {
+      font-size:26px; font-weight:700; color:#006c59;
+      display:flex; align-items:center; gap:8px;
+    }
+    nav h1 i {color:#006c59; font-size:28px; animation:pulse 2s infinite;}
+    nav ul {
+      list-style:none; display:flex; gap:25px;
+    }
+    nav ul li a {
+      text-decoration:none; color:#2c3e50; font-size:16px; font-weight:600;
+      display:flex; align-items:center; gap:6px; transition:0.3s;
+    }
+    nav ul li a:hover {color:#006c59; transform:scale(1.1);}
+
+    /* Hamburger */
+    .menu-toggle {display:none; font-size:24px; color:#006c59; cursor:pointer;}
+    @keyframes pulse {0%,100%{transform:scale(1);} 50%{transform:scale(1.2);}}
+
+    /* Page Header */
+    .page-header {text-align:center; padding:50px 20px 20px;}
+    .page-header h2 {font-size:36px; color:#006c59; margin-bottom:10px;}
+    .page-header p {font-size:18px; color:#555;}
+
+    /* Community Feed */
+    .community {
+      padding:40px 8%;
+      display:flex; flex-direction:column; gap:25px;
+      max-width:900px; margin:auto;
+    }
+    .post {
+      background:#fff; border-radius:20px; padding:20px;
+      box-shadow:0 8px 18px rgba(0,0,0,0.08); transition:0.3s;
+    }
+    .post:hover {transform:translateY(-4px); box-shadow:0 12px 22px rgba(0,0,0,0.12);}
+    .post-header {display:flex; align-items:center; gap:12px; margin-bottom:12px;}
+    .post-header img {width:50px; height:50px; border-radius:50%; object-fit:cover;}
+    .post-header h4 {font-size:18px; font-weight:700; color:#006c59;}
+    .post-header span {font-size:14px; color:#777;}
+    .post p {font-size:16px; color:#333; margin-bottom:15px;}
+    .post-actions {display:flex; gap:20px; font-size:15px; color:#555;}
+    .post-actions i {margin-right:6px; color:#006c59; cursor:pointer; transition:0.3s;}
+    .post-actions i:hover {color:#74ebd5; transform:scale(1.2);}
+
+    /* Create Post */
+    .create-post {
+      background:#fff; border-radius:20px; padding:20px;
+      box-shadow:0 8px 18px rgba(0,0,0,0.08); margin-bottom:20px;
+    }
+    .create-post textarea {
+      width:100%; border:none; resize:none; outline:none;
+      font-size:16px; padding:10px; border-radius:10px;
+      background:#f4f9f9; margin-bottom:12px;
+    }
+    .create-post button {
+      background:#006c59; color:#fff; border:none;
+      padding:10px 20px; border-radius:25px;
+      font-weight:600; cursor:pointer; transition:0.3s;
+    }
+    .create-post button:hover {background:#74ebd5; color:#006c59; transform:scale(1.05);}
+
+    /* Footer */
+    footer {background:#006c59; color:#fff; text-align:center; padding:22px; margin-top:50px; font-size:14px;}
+
+    /* Responsive */
+    @media(max-width:768px){
+      nav ul {
+        position:absolute; top:65px; right:8%; background:#fff;
+        flex-direction:column; gap:15px; padding:15px; border-radius:12px;
+        box-shadow:0 8px 20px rgba(0,0,0,0.1);
+        display:none;
+      }
+      nav ul.active {display:flex;}
+      .menu-toggle {display:block;}
+      .page-header h2{font-size:28px;}
+      .page-header p{font-size:16px;}
+    }
+    @media(max-width:480px){
+      .post-header img{width:40px; height:40px;}
+      .post-header h4{font-size:16px;}
+      .post-header span{font-size:12px;}
+      .post p{font-size:14px;}
+      .post-actions{font-size:13px; gap:15px;}
+      .create-post textarea{font-size:14px;}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav>
+    <h1><i class="fa-solid fa-brain"></i> MindSync</h1>
+    <i class="fa-solid fa-bars menu-toggle"></i>
+    <ul>
+      <li><a href="dashboard.html"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+      <li><a href="wellness.html"><i class="fa-solid fa-chart-line"></i> Wellness</a></li>
+      <li><a href="fitness.html"><i class="fa-solid fa-dumbbell"></i> Fitness</a></li>
+      <li><a href="nutrition.html"><i class="fa-solid fa-utensils"></i> Nutrition</a></li>
+      <li><a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a></li>
+      <li><a href="logout.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+    </ul>
+  </nav>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h2>Community Dashboard</h2>
+    <p>Connect, share, and grow with like-minded people</p>
+  </div>
+
+  <!-- Create Post -->
+  <section class="community">
+    <div class="create-post">
+      <textarea rows="3" placeholder="Share your thoughts..."></textarea>
+      <button><i class="fa-solid fa-paper-plane"></i> Post</button>
+    </div>
+
+    <!-- Posts -->
+    <div class="post">
+      <div class="post-header">
+        <img src="https://i.pravatar.cc/50?img=5" alt="User">
+        <div>
+          <h4>Sarah Johnson</h4>
+          <span>2 hrs ago</span>
+        </div>
+      </div>
+      <p>Just tried a 10-min breathing session from MindSync’s stress tools — I feel so refreshed 💙🌿</p>
+      <div class="post-actions">
+        <span><i class="fa-solid fa-thumbs-up"></i> Like</span>
+        <span><i class="fa-solid fa-comment"></i> Comment</span>
+        <span><i class="fa-solid fa-share"></i> Share</span>
+      </div>
+    </div>
+
+    <div class="post">
+      <div class="post-header">
+        <img src="https://i.pravatar.cc/50?img=10" alt="User">
+        <div>
+          <h4>James Lee</h4>
+          <span>5 hrs ago</span>
+        </div>
+      </div>
+      <p>Anyone here using the sleep tracker? My sleep score went up by 20% last week 🔥</p>
+      <div class="post-actions">
+        <span><i class="fa-solid fa-thumbs-up"></i> Like</span>
+        <span><i class="fa-solid fa-comment"></i> Comment</span>
+        <span><i class="fa-solid fa-share"></i> Share</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 MindSync. Building a healthier community together 💙</p>
+  </footer>
+
+  <script>
+    // Toggle mobile menu
+    const menuToggle = document.querySelector(".menu-toggle");
+    const navLinks = document.querySelector("nav ul");
+    menuToggle.addEventListener("click", () => {
+      navLinks.classList.toggle("active");
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "mindbodysync-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Simple frontend for MindBodySync",
+  "scripts": {
+    "start": "live-server ."
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

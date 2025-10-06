@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindSync - Nutrition</title>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {margin:0; padding:0; box-sizing:border-box; font-family:'Quicksand',sans-serif;}
+    body {background: linear-gradient(135deg,#e0f7fa,#b3e5fc,#90caf9); color:#2c3e50; min-height:100vh;}
+
+    /* Navbar */
+    nav {
+      background: rgba(255,255,255,0.95);
+      padding: 15px 8%;
+      display:flex; justify-content:space-between; align-items:center;
+      position:sticky; top:0; z-index:1000;
+      box-shadow:0 2px 8px rgba(0,0,0,0.08);
+      flex-wrap:wrap;
+    }
+    nav h1 {font-size:26px; font-weight:700; color:#006c59; display:flex; align-items:center; gap:8px;}
+    nav h1 i {color:#006c59; font-size:28px; animation:pulse 2s infinite;}
+    nav ul {list-style:none; display:flex; gap:25px; flex-wrap:wrap;}
+    nav ul li a {
+      text-decoration:none; color:#2c3e50; font-size:16px; font-weight:600;
+      display:flex; align-items:center; gap:6px; transition:0.3s;
+    }
+    nav ul li a:hover {color:#006c59; transform:scale(1.1);}
+    @keyframes pulse {0%,100%{transform:scale(1);} 50%{transform:scale(1.2);} }
+
+    /* Page Header */
+    .page-header {
+      text-align:center; padding:50px 20px 20px;
+    }
+    .page-header h2 {font-size:36px; color:#006c59; margin-bottom:10px;}
+    .page-header p {font-size:18px; color:#555;}
+
+    /* Nutrition Section */
+    .nutrition {
+      padding:40px 8%;
+      max-width:900px; margin:auto;
+      display:flex; flex-direction:column; gap:30px;
+    }
+
+    /* Daily Meal */
+    .meal {
+      background:#fff; border-radius:20px; padding:20px;
+      box-shadow:0 8px 18px rgba(0,0,0,0.08);
+    }
+    .meal h3 {color:#006c59; font-size:22px; margin-bottom:10px;}
+    .meal p {color:#333; margin-bottom:15px;}
+    .meal button {
+      background:#006c59; color:#fff; border:none; padding:10px 20px;
+      border-radius:25px; font-weight:600; cursor:pointer; transition:0.3s;
+    }
+    .meal button:hover {background:#81d4fa; color:#006c59; transform:scale(1.05);}
+
+    /* Nutrition Tracker */
+    .tracker {
+      background:#fff; border-radius:20px; padding:20px;
+      box-shadow:0 8px 18px rgba(0,0,0,0.08);
+    }
+    .tracker h3 {color:#006c59; margin-bottom:15px;}
+    .tracker .stats {
+      display:flex; justify-content:space-around; flex-wrap:wrap; gap:20px;
+    }
+    .stat-box {
+      background:#e3f2fd; padding:15px 20px; border-radius:15px;
+      text-align:center; min-width:120px; flex:1;
+    }
+    .stat-box h4 {font-size:18px; color:#006c59;}
+    .stat-box p {font-size:16px; color:#333; font-weight:600;}
+
+    /* Recipe Ideas */
+    .recipes {
+      background:#fff; border-radius:20px; padding:20px;
+      box-shadow:0 8px 18px rgba(0,0,0,0.08);
+    }
+    .recipes h3 {color:#006c59; margin-bottom:15px;}
+    .recipe-item {
+      display:flex; justify-content:space-between; padding:10px 0;
+      border-bottom:1px solid #eee; color:#333; flex-wrap:wrap;
+    }
+    .recipe-item:last-child {border-bottom:none;}
+
+    /* Footer */
+    footer {background:#006c59; color:#fff; text-align:center; padding:22px; margin-top:50px; font-size:14px;}
+
+    /* Responsive */
+    @media(max-width:768px){
+      nav ul {gap:15px; font-size:14px;}
+      .page-header h2{font-size:28px;}
+      .page-header p{font-size:16px;}
+      .stat-box{min-width:100px; padding:12px;}
+    }
+
+    @media(max-width:500px){
+      nav {flex-direction:column; align-items:flex-start;}
+      nav ul {flex-direction:column; width:100%; gap:12px; margin-top:10px;}
+      .page-header h2{font-size:24px;}
+      .page-header p{font-size:14px;}
+      .meal, .tracker, .recipes {padding:15px;}
+      .stat-box h4{font-size:16px;}
+      .stat-box p{font-size:14px;}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav>
+    <h1><i class="fa-solid fa-brain"></i> MindSync</h1>
+    <ul>
+      <li><a href="dashboard.html"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+      <li><a href="wellness.html"><i class="fa-solid fa-chart-line"></i> Wellness</a></li>
+      <li><a href="fitness.html"><i class="fa-solid fa-dumbbell"></i> Fitness</a></li>
+      <li><a href="nutrition.html"><i class="fa-solid fa-utensils"></i> Nutrition</a></li>
+      <li><a href="meditation.html"><i class="fa-solid fa-spa"></i> Meditation</a></li>
+      <li><a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a></li>
+      <li><a href="logout.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+    </ul>
+  </nav>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h2>Nutrition Hub</h2>
+    <p>Eat mindfully, track your meals, and fuel your body 🍎🥗</p>
+  </div>
+
+  <!-- Nutrition Content -->
+  <section class="nutrition">
+    
+    <!-- Daily Meal -->
+    <div class="meal">
+      <h3><i class="fa-solid fa-bowl-food"></i> Today’s Meal Plan</h3>
+      <p>Stay energized with a healthy balance of protein, carbs, and good fats 🍳</p>
+      <button>View Plan</button>
+    </div>
+
+    <!-- Nutrition Tracker -->
+    <div class="tracker">
+      <h3><i class="fa-solid fa-chart-pie"></i> Nutrition Tracker</h3>
+      <div class="stats">
+        <div class="stat-box">
+          <h4>Calories</h4>
+          <p>1850 kcal</p>
+        </div>
+        <div class="stat-box">
+          <h4>Protein</h4>
+          <p>78 g</p>
+        </div>
+        <div class="stat-box">
+          <h4>Carbs</h4>
+          <p>210 g</p>
+        </div>
+        <div class="stat-box">
+          <h4>Fats</h4>
+          <p>65 g</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recipe Ideas -->
+    <div class="recipes">
+      <h3><i class="fa-solid fa-book-open"></i> Healthy Recipes</h3>
+      <div class="recipe-item"><span>🥗 Quinoa Salad</span><span>300 kcal</span></div>
+      <div class="recipe-item"><span>🍳 Veggie Omelette</span><span>250 kcal</span></div>
+      <div class="recipe-item"><span>🥤 Smoothie Bowl</span><span>180 kcal</span></div>
+      <div class="recipe-item"><span>🍲 Lentil Soup</span><span>220 kcal</span></div>
+    </div>
+
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 MindSync. Nourish your body. Live fully. 💙🥑</p>
+  </footer>
+
+</body>
+</html>

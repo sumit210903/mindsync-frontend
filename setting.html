@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindSync - Settings</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Quicksand', sans-serif; }
+
+body {
+  background: linear-gradient(135deg, #dff6f0, #b9e5e8, #a7c7e7);
+  color: #2c3e50;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar */
+nav {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 15px 8%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  flex-wrap: wrap;
+}
+nav h1 { font-size: 26px; font-weight: 700; color: #006c59; display: flex; align-items: center; gap: 8px; }
+nav h1 i { color: #006c59; font-size: 28px; animation: pulse 2s infinite; }
+nav ul { list-style: none; display: flex; gap: 25px; flex-wrap: wrap; }
+nav ul li a { text-decoration: none; color: #2c3e50; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 6px; transition: 0.3s; }
+nav ul li a:hover { color: #006c59; transform: scale(1.1); }
+@keyframes pulse { 0%,100%{ transform: scale(1);} 50%{ transform: scale(1.2);} }
+
+/* Settings Section */
+.settings-container {
+  flex: 1;
+  padding: 50px 8%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn 1s ease forwards;
+}
+@keyframes fadeIn { 0% { opacity: 0; transform: translateY(20px);} 100% { opacity: 1; transform: translateY(0);} }
+
+.settings-card {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+  padding: 40px 30px;
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+}
+.settings-card h2 {
+  font-size: 26px;
+  color: #006c59;
+  margin-bottom: 20px;
+}
+.settings-card img {
+  width: 120px; height: 120px; border-radius: 50%;
+  border: 4px solid #006c59; object-fit: cover; margin-bottom: 15px;
+  cursor: pointer; transition: 0.3s;
+}
+.settings-card img:hover { transform: scale(1.05); }
+
+.edit-form { text-align: left; width: 100%; }
+.edit-form label { display: block; margin: 8px 0 3px; font-weight: 600; }
+.edit-form input { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 12px; }
+
+button.save-btn {
+  background: #006c59;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+button.save-btn:hover { background: #74ebd5; color: #006c59; transform: scale(1.05); }
+
+/* Footer */
+footer { background: #006c59; color: #fff; text-align: center; padding: 22px; font-size: 14px; }
+
+/* Responsive */
+@media(max-width:600px){ .settings-card { padding: 25px 20px; } .settings-card h2 { font-size: 22px; } }
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav>
+  <h1><i class="fa-solid fa-brain"></i> MindSync</h1>
+  <ul>
+    <li><a href="dashboard.html"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+    <li><a href="wellness.html"><i class="fa-solid fa-chart-line"></i> Wellness</a></li>
+    <li><a href="fitness.html"><i class="fa-solid fa-dumbbell"></i> Fitness</a></li>
+    <li><a href="nutrition.html"><i class="fa-solid fa-utensils"></i> Nutrition</a></li>
+    <li><a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a></li>
+    <li><a href="logout.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+  </ul>
+</nav>
+
+<!-- Settings Section -->
+<section class="settings-container">
+  <div class="settings-card">
+    <h2>Account Settings</h2>
+    <img id="profile-pic" src="https://via.placeholder.com/120" alt="User Photo">
+    <br>
+    <label for="file-upload" class="upload-btn" style="cursor:pointer; display:inline-block; margin-bottom:15px; color:#006c59; font-weight:600;">
+      <i class="fa-solid fa-camera"></i> Change Photo
+    </label>
+    <input type="file" id="file-upload" accept="image/*" style="display:none;">
+
+    <form class="edit-form" id="settingsForm">
+      <label for="editName">Name:</label>
+      <input type="text" id="editName" required>
+
+      <label for="editEmail">Email:</label>
+      <input type="email" id="editEmail" required>
+
+      <label for="editAge">Age:</label>
+      <input type="number" id="editAge">
+
+      <label for="editGoal">Fitness Goal:</label>
+      <input type="text" id="editGoal">
+
+      <button type="submit" class="save-btn"><i class="fa-solid fa-check"></i> Save Changes</button>
+    </form>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>&copy; 2025 MindSync. Be the best version of yourself 💙🌟</p>
+</footer>
+
+<script>
+// Get user data from localStorage
+let user = JSON.parse(localStorage.getItem("user"));
+if(!user){ window.location.href = "login.html"; }
+
+// Elements
+const profilePic = document.getElementById("profile-pic");
+const fileUpload = document.getElementById("file-upload");
+const form = document.getElementById("settingsForm");
+
+// Pre-fill form
+document.getElementById("editName").value = user.name || "";
+document.getElementById("editEmail").value = user.email || "";
+document.getElementById("editAge").value = user.age || "";
+document.getElementById("editGoal").value = user.goal || "";
+if(user.photo) profilePic.src = user.photo;
+
+// Photo upload
+fileUpload.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if(file){
+    const reader = new FileReader();
+    reader.onload = event => {
+      profilePic.src = event.target.result;
+      user.photo = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+// Save changes
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  user.name = document.getElementById("editName").value;
+  user.email = document.getElementById("editEmail").value;
+  user.age = document.getElementById("editAge").value;
+  user.goal = document.getElementById("editGoal").value;
+  localStorage.setItem("user", JSON.stringify(user));
+  alert("Profile updated successfully!");
+  window.location.href = "profile.html";
+});
+</script>
+</body>
+</html>

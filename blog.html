@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindSync - Blog</title>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #dff6f0, #b9e5e8, #a7c7e7);
+      color: #2c3e50;
+    }
+
+    /* Navbar */
+    nav {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 15px 8%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+    }
+
+    nav:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+
+    nav h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #006c59;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    nav h1 i { color: #006c59; font-size: 28px; animation: pulse 2s infinite; }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 25px;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: #2c3e50;
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.3s ease, transform 0.3s ease;
+      position: relative;
+    }
+
+    nav ul li a:hover {
+      color: #006c59;
+      transform: scale(1.1);
+    }
+
+    nav ul li a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -5px;
+      width: 0%;
+      height: 2px;
+      background: #006c59;
+      transition: width 0.3s ease;
+    }
+
+    nav ul li a:hover::after { width: 100%; }
+
+    /* Hero Section */
+    .hero {
+      min-height: 50vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 40px 20px;
+      background: linear-gradient(120deg, rgba(0,108,89,0.7), rgba(167,199,231,0.7));
+      color: #fff;
+    }
+
+    .hero h2 {
+      font-size: 42px;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    .hero p {
+      font-size: 18px;
+      font-weight: 400;
+      opacity: 0.95;
+    }
+
+    /* Blog Section */
+    .blog-section {
+      padding: 70px 8%;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+
+    .blog-card {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+      overflow: hidden;
+      transition: transform 0.3s;
+    }
+
+    .blog-card:hover {
+      transform: translateY(-8px) scale(1.03);
+    }
+
+    .blog-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .blog-card-content {
+      padding: 20px;
+      text-align: left;
+    }
+
+    .blog-card-content h3 {
+      color: #006c59;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .blog-card-content p {
+      color: #555;
+      font-size: 15px;
+      margin-bottom: 12px;
+    }
+
+    .blog-card-content a {
+      text-decoration: none;
+      color: #fff;
+      background: #006c59;
+      padding: 8px 18px;
+      border-radius: 25px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background 0.3s, transform 0.3s;
+    }
+
+    .blog-card-content a:hover {
+      background: #74ebd5;
+      transform: scale(1.05);
+    }
+
+    /* Footer */
+    footer {
+      background: #006c59;
+      color: #fff;
+      text-align: center;
+      padding: 22px;
+      margin-top: 50px;
+      font-size: 14px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav { flex-direction: column; align-items: flex-start; }
+      nav h1 { margin-bottom: 10px; }
+      nav ul { flex-wrap: wrap; gap: 15px; }
+      .hero h2 { font-size: 34px; }
+      .hero p { font-size: 16px; }
+    }
+
+    @media (max-width: 480px) {
+      .hero h2 { font-size: 26px; }
+      .hero p { font-size: 14px; }
+      .blog-section { padding: 40px 5%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav>
+    <h1><i class="fa-solid fa-brain"></i> MindSync</h1>
+    <ul>
+      <li><a href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+      <li><a href="features.html"><i class="fa-solid fa-star"></i> Features</a></li>
+      <li><a href="community.html"><i class="fa-solid fa-users"></i> Community</a></li>
+      <li><a href="blog.html"><i class="fa-solid fa-blog"></i> Blog</a></li>
+      <li><a href="contact.html"><i class="fa-solid fa-envelope"></i> Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div>
+      <h2>Latest Insights & Articles</h2>
+      <p>Explore tips, stories, and expert guidance on fitness, nutrition, and mindfulness.</p>
+    </div>
+  </section>
+
+  <!-- Blog Section -->
+  <section class="blog-section">
+    <div class="blog-card">
+      <img src="https://images.unsplash.com/photo-1554284126-5f92c1a2b1c1?auto=format&fit=crop&w=800&q=80" alt="Blog 1">
+      <div class="blog-card-content">
+        <h3>10 Tips for Mindful Living</h3>
+        <p>Learn how to integrate mindfulness into your daily routine and reduce stress.</p>
+        <a href="#">Read More</a>
+      </div>
+    </div>
+    <div class="blog-card">
+      <img src="https://images.unsplash.com/photo-1526403227829-7e15b299fccc?auto=format&fit=crop&w=800&q=80" alt="Blog 2">
+      <div class="blog-card-content">
+        <h3>Healthy Eating Habits</h3>
+        <p>Discover balanced nutrition strategies for sustained energy and wellness.</p>
+        <a href="#">Read More</a>
+      </div>
+    </div>
+    <div class="blog-card">
+      <img src="https://images.unsplash.com/photo-1533777324565-3a3c8f7dff20?auto=format&fit=crop&w=800&q=80" alt="Blog 3">
+      <div class="blog-card-content">
+        <h3>Home Workouts for Everyone</h3>
+        <p>Simple exercises you can do at home to stay fit and healthy.</p>
+        <a href="#">Read More</a>
+      </div>
+    </div>
+    <div class="blog-card">
+      <img src="https://images.unsplash.com/photo-1587502536263-3cdd0b8b34f2?auto=format&fit=crop&w=800&q=80" alt="Blog 4">
+      <div class="blog-card-content">
+        <h3>Stress Management Techniques</h3>
+        <p>Effective strategies to reduce stress and enhance mental clarity in daily life.</p>
+        <a href="#">Read More</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 MindSync. Empowering wellness through synergy 💙🌿</p>
+  </footer>
+
+</body>
+</html>

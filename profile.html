@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindSync - Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Quicksand', sans-serif; }
+body {
+  background: linear-gradient(135deg, #dff6f0, #b9e5e8, #a7c7e7);
+  color: #2c3e50;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+/* Navbar */
+nav {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 15px 8%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  flex-wrap: wrap;
+}
+nav h1 { font-size: 26px; font-weight: 700; color: #006c59; display: flex; align-items: center; gap: 8px; }
+nav h1 i { color: #006c59; font-size: 28px; animation: pulse 2s infinite; }
+nav ul { list-style: none; display: flex; gap: 25px; flex-wrap: wrap; }
+nav ul li a { text-decoration: none; color: #2c3e50; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 6px; transition: 0.3s; }
+nav ul li a:hover { color: #006c59; transform: scale(1.1); }
+@keyframes pulse { 0%,100%{ transform: scale(1);} 50%{ transform: scale(1.2);} }
+
+/* Profile Section */
+.profile-container { flex: 1; padding: 50px 8%; display: flex; flex-direction: column; align-items: center; animation: fadeIn 1s ease forwards; }
+@keyframes fadeIn { 0% { opacity: 0; transform: translateY(20px);} 100% { opacity: 1; transform: translateY(0);} }
+
+.profile-card {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+  padding: 40px 30px;
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+}
+.profile-card img { 
+  width: 120px; 
+  height: 120px; 
+  border-radius: 50%; 
+  border: 4px solid #006c59; 
+  object-fit: cover; 
+  margin-bottom: 10px; 
+  cursor: pointer; /* clickable avatar */
+  transition: 0.3s;
+}
+.profile-card img:hover { transform: scale(1.05); }
+.profile-card h2 { font-size: 26px; color: #006c59; margin-bottom: 5px; }
+.profile-card p { color: #555; font-size: 15px; margin-bottom: 15px; }
+
+.profile-info { margin-top: 15px; text-align: left; }
+.profile-info div { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
+.profile-info div:last-child { border-bottom: none; }
+.profile-info strong { color: #006c59; }
+
+/* Buttons */
+.actions { margin-top: 25px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+.actions a {
+  padding: 10px 20px; border-radius: 25px; font-weight: 600; text-decoration: none; transition: 0.3s;
+  display: flex; align-items: center; gap: 6px;
+}
+.btn-settings { background: #006c59; color: #fff; }
+.btn-settings:hover { background: #74ebd5; color: #006c59; transform: scale(1.05); }
+.btn-logout { background: #ff4d4d; color: #fff; }
+.btn-logout:hover { background: #ff9999; transform: scale(1.05); }
+
+/* Footer */
+footer { background: #006c59; color: #fff; text-align: center; padding: 22px; font-size: 14px; }
+
+/* Responsive */
+@media(max-width:600px){ .profile-card { padding: 25px 20px; } .profile-card h2 { font-size: 22px; } .profile-info div { flex-direction: column; gap: 5px; } }
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav>
+  <h1><i class="fa-solid fa-brain"></i> MindSync</h1>
+  <ul>
+    <li><a href="dashboard.html"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+    <li><a href="wellness.html"><i class="fa-solid fa-chart-line"></i> Wellness</a></li>
+    <li><a href="fitness.html"><i class="fa-solid fa-dumbbell"></i> Fitness</a></li>
+    <li><a href="nutrition.html"><i class="fa-solid fa-utensils"></i> Nutrition</a></li>
+    <li><a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a></li>
+    <li><a href="logout.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+  </ul>
+</nav>
+
+<!-- Profile Section -->
+<section class="profile-container">
+  <div class="profile-card">
+    <img id="profile-pic" src="https://via.placeholder.com/120" alt="User Profile" title="Click to edit profile">
+    <h2 id="username">Loading...</h2>
+    <p id="usermember">MindSync Member</p>
+
+    <div class="profile-info">
+      <div><strong>Email:</strong> <span id="useremail">-</span></div>
+      <div><strong>Age:</strong> <span id="userage">-</span></div>
+      <div><strong>Fitness Goal:</strong> <span id="usergoal">-</span></div>
+      <div><strong>Joined:</strong> <span id="userjoined">-</span></div>
+    </div>
+
+    <div class="actions">
+      <a href="settings.html" class="btn-settings"><i class="fa-solid fa-gear"></i> Settings</a>
+      <a href="logout.html" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>&copy; 2025 MindSync. Be the best version of yourself 💙🌟</p>
+</footer>
+
+<script>
+const user = JSON.parse(localStorage.getItem("user"));
+
+if(!user){ window.location.href = "login.html"; } 
+else {
+  const usernameEl = document.getElementById("username");
+  const emailEl = document.getElementById("useremail");
+  const ageEl = document.getElementById("userage");
+  const goalEl = document.getElementById("usergoal");
+  const joinedEl = document.getElementById("userjoined");
+  const memberEl = document.getElementById("usermember");
+  const profilePic = document.getElementById("profile-pic");
+
+  usernameEl.textContent = user.name || "User";
+  emailEl.textContent = user.email || "-";
+  ageEl.textContent = user.age || "-";
+  goalEl.textContent = user.goal || "-";
+  joinedEl.textContent = user.joined || "-";
+  memberEl.textContent = `MindSync Member since ${user.joined || "2025"}`;
+  if(user.photo) profilePic.src = user.photo;
+
+  // Make avatar clickable to go to settings
+  profilePic.addEventListener('click', () => {
+    window.location.href = "settings.html";
+  });
+}
+</script>
+</body>
+</html>

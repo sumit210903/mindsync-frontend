@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindSync - Meditation</title>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {margin:0; padding:0; box-sizing:border-box; font-family:'Quicksand',sans-serif;}
+    body {background: linear-gradient(135deg,#e0f7fa,#b3e5fc,#90caf9); color:#2c3e50; min-height:100vh;}
+
+    /* Navbar */
+    nav {
+      background: rgba(255,255,255,0.95);
+      padding: 15px 8%;
+      display:flex; justify-content:space-between; align-items:center;
+      position:sticky; top:0; z-index:1000;
+      box-shadow:0 2px 8px rgba(0,0,0,0.08);
+    }
+    nav h1 {font-size:26px; font-weight:700; color:#006c59; display:flex; align-items:center; gap:8px;}
+    nav h1 i {color:#006c59; font-size:28px; animation:pulse 2s infinite;}
+    nav ul {list-style:none; display:flex; gap:25px;}
+    nav ul li a {
+      text-decoration:none; color:#2c3e50; font-size:16px; font-weight:600;
+      display:flex; align-items:center; gap:6px; transition:0.3s;
+    }
+    nav ul li a:hover {color:#006c59; transform:scale(1.1);}
+    @keyframes pulse {0%,100%{transform:scale(1);} 50%{transform:scale(1.2);} }
+
+    /* Page Header */
+    .page-header {
+      text-align:center; padding:50px 20px 20px;
+    }
+    .page-header h2 {font-size:36px; color:#006c59; margin-bottom:10px;}
+    .page-header p {font-size:18px; color:#555;}
+
+    /* Meditation Section */
+    .meditation {
+      padding:40px 8%;
+      max-width:900px; margin:auto;
+      display:flex; flex-direction:column; gap:30px;
+    }
+
+    /* Daily Meditation */
+    .daily {
+      background:#fff; border-radius:20px; padding:20px;
+      box-shadow:0 8px 18px rgba(0,0,0,0.08);
+    }
+    .daily h3 {color:#006c59; font-size:22px; margin-bottom:10px;}
+    .daily p {color:#333; margin-bottom:15px;}
+    .daily button {
+      background:#006c59; color:#fff; border:none; padding:10px 20px;
+      border-radius:25px; font-weight:600; cursor:pointer; transition:0.3s;
+    }
+    .daily button:hover {background:#81d4fa; color:#006c59; transform:scale(1.05);}
+
+    /* Mood Tracker */
+    .mood {
+      background:#fff; border-radius:20px; padding:20px;
+      box-shadow:0 8px 18px rgba(0,0,0,0.08);
+    }
+    .mood h3 {color:#006c59; margin-bottom:15px;}
+    .emojis {display:flex; justify-content:space-around; font-size:28px;}
+    .emojis span {cursor:pointer; transition:0.2s;}
+    .emojis span:hover {transform:scale(1.2);}
+
+    /* Meditation Log */
+    .log {
+      background:#fff; border-radius:20px; padding:20px;
+      box-shadow:0 8px 18px rgba(0,0,0,0.08);
+    }
+    .log h3 {color:#006c59; margin-bottom:10px;}
+    .log-entry {
+      display:flex; justify-content:space-between; padding:10px 0;
+      border-bottom:1px solid #eee; color:#333;
+    }
+    .log-entry:last-child {border-bottom:none;}
+
+    /* Footer */
+    footer {background:#006c59; color:#fff; text-align:center; padding:22px; margin-top:50px; font-size:14px;}
+
+    @media(max-width:600px){
+      .page-header h2{font-size:26px;}
+      .page-header p{font-size:15px;}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav>
+    <h1><i class="fa-solid fa-brain"></i> MindSync</h1>
+    <ul>
+      <li><a href="dashboard.html"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+      <li><a href="wellness.html"><i class="fa-solid fa-chart-line"></i> Wellness</a></li>
+      <li><a href="fitness.html"><i class="fa-solid fa-dumbbell"></i> Fitness</a></li>
+      <li><a href="nutrition.html"><i class="fa-solid fa-utensils"></i> Nutrition</a></li>
+      <li><a href="meditation.html"><i class="fa-solid fa-spa"></i> Meditation</a></li>
+      <li><a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a></li>
+      <li><a href="logout.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+    </ul>
+  </nav>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h2>Meditation Hub</h2>
+    <p>Find calm, track moods, and improve mindfulness 🧘‍♂️</p>
+  </div>
+
+  <!-- Meditation Content -->
+  <section class="meditation">
+    
+    <!-- Daily Meditation -->
+    <div class="daily">
+      <h3><i class="fa-solid fa-bell"></i> Today’s Meditation</h3>
+      <p>Take 10 minutes to focus on your breath and let go of stress 🌿</p>
+      <button>Start Session</button>
+    </div>
+
+    <!-- Mood Tracker -->
+    <div class="mood">
+      <h3><i class="fa-solid fa-face-smile"></i> Mood Tracker</h3>
+      <div class="emojis">
+        <span>😊</span>
+        <span>😌</span>
+        <span>😐</span>
+        <span>😔</span>
+        <span>😡</span>
+      </div>
+    </div>
+
+    <!-- Meditation Log -->
+    <div class="log">
+      <h3><i class="fa-solid fa-book"></i> Session Log</h3>
+      <div class="log-entry"><span>🌅 Morning Meditation</span><span>15 min</span></div>
+      <div class="log-entry"><span>🌙 Evening Relaxation</span><span>20 min</span></div>
+      <div class="log-entry"><span>✨ Gratitude Practice</span><span>10 min</span></div>
+    </div>
+
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 MindSync. Breathe. Relax. Heal. 💙🧘</p>
+  </footer>
+
+</body>
+</html>

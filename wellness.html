@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindSync - Wellness</title>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {margin:0; padding:0; box-sizing:border-box; font-family:'Quicksand',sans-serif;}
+    body {background: linear-gradient(135deg,#dff6f0,#b9e5e8,#a7c7e7); color:#2c3e50; min-height:100vh;}
+
+    /* Navbar */
+    nav {
+      background: rgba(255,255,255,0.95);
+      padding: 15px 8%;
+      display:flex; justify-content:space-between; align-items:center;
+      position:sticky; top:0; z-index:1000;
+      box-shadow:0 2px 8px rgba(0,0,0,0.08);
+    }
+    nav h1 {font-size:26px; font-weight:700; color:#006c59; display:flex; align-items:center; gap:8px;}
+    nav h1 i {color:#006c59; font-size:28px; animation:pulse 2s infinite;}
+    nav ul {list-style:none; display:flex; gap:25px;}
+    nav ul li a {
+      text-decoration:none; color:#2c3e50; font-size:16px; font-weight:600;
+      display:flex; align-items:center; gap:6px; transition:0.3s;
+    }
+    nav ul li a:hover {color:#006c59; transform:scale(1.1);}
+    @keyframes pulse {0%,100%{transform:scale(1);} 50%{transform:scale(1.2);}}
+
+    /* Page Title */
+    .page-header {
+      text-align:center; padding:50px 20px 20px;
+    }
+    .page-header h2 {font-size:36px; color:#006c59; margin-bottom:10px;}
+    .page-header p {font-size:18px; color:#555;}
+
+    /* Wellness Cards */
+    .wellness {
+      padding:40px 8%;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:30px;
+      animation:fadeIn 1s ease forwards;
+    }
+    @keyframes fadeIn {0%{opacity:0; transform:translateY(20px);}100%{opacity:1; transform:translateY(0);}}
+    .card {
+      background:#fff; border-radius:20px; padding:25px 20px; text-align:center;
+      box-shadow:0 8px 18px rgba(0,0,0,0.08); transition:0.3s;
+    }
+    .card:hover {transform:translateY(-6px) scale(1.03); box-shadow:0 12px 24px rgba(0,0,0,0.12);}
+    .card i {font-size:36px; color:#006c59; margin-bottom:12px;}
+    .card h3 {font-size:22px; color:#006c59; margin-bottom:8px;}
+    .card p {font-size:16px; color:#555;}
+    .card a {
+      display:inline-block; margin-top:12px; padding:8px 20px; border-radius:25px;
+      background:#006c59; color:#fff; text-decoration:none; font-weight:600; transition:0.3s;
+    }
+    .card a:hover {background:#74ebd5; color:#006c59; transform:scale(1.05);}
+
+    /* Footer */
+    footer {background:#006c59; color:#fff; text-align:center; padding:22px; margin-top:50px; font-size:14px;}
+
+    @media(max-width:480px){
+      .page-header h2{font-size:26px;}
+      .page-header p{font-size:15px;}
+      .card h3{font-size:18px;}
+      .card p{font-size:14px;}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav>
+    <h1><i class="fa-solid fa-brain"></i> MindSync</h1>
+    <ul>
+      <li><a href="dashboard.html"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+      <li><a href="wellness.html"><i class="fa-solid fa-chart-line"></i> Wellness</a></li>
+      <li><a href="fitness.html"><i class="fa-solid fa-dumbbell"></i> Fitness</a></li>
+      <li><a href="nutrition.html"><i class="fa-solid fa-utensils"></i> Nutrition</a></li>
+      <li><a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a></li>
+      <li><a href="logout.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+    </ul>
+  </nav>
+
+  <!-- Page Title -->
+  <div class="page-header">
+    <h2>Wellness Hub</h2>
+    <p>Explore tools to balance your mind, body, and spirit</p>
+  </div>
+
+  <!-- Wellness Cards -->
+  <section class="wellness">
+    <div class="card">
+      <i class="fa-solid fa-spa"></i>
+      <h3>Mindfulness</h3>
+      <p>Practice guided meditation and relaxation exercises daily</p>
+      <a href="#">Explore</a>
+    </div>
+    <div class="card">
+      <i class="fa-solid fa-bed"></i>
+      <h3>Sleep Tracker</h3>
+      <p>Monitor sleep cycles, get tips, and improve rest quality</p>
+      <a href="#">Track</a>
+    </div>
+    <div class="card">
+      <i class="fa-solid fa-heart-pulse"></i>
+      <h3>Stress Management</h3>
+      <p>Learn breathing techniques and reduce stress effectively</p>
+      <a href="#">Start</a>
+    </div>
+    <div class="card">
+      <i class="fa-solid fa-seedling"></i>
+      <h3>Growth Journey</h3>
+      <p>Set goals, track progress, and stay motivated in wellness</p>
+      <a href="#">Begin</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 MindSync. Empowering wellness through synergy 💙🌿</p>
+  </footer>
+
+</body>
+</html>
