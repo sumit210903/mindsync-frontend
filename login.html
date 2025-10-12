@@ -82,6 +82,21 @@
       border-color: #006c59; outline: none; box-shadow: 0 0 5px rgba(0,108,89,0.3);
     }
 
+    .password-wrapper {
+      position: relative;
+    }
+    .toggle-password {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #666;
+    }
+    .toggle-password:hover {
+      color: #006c59;
+    }
+
     .login-card button {
       background: #006c59; color: #fff; padding: 12px 25px;
       border: none; border-radius: 25px; font-size: 14px; font-weight: 600;
@@ -134,13 +149,18 @@
   </section>
 
   <!-- Login Section -->
-  <section class="login-section" id="login-section">
+  <section class="login-section">
     <div class="login-card">
       <h3>Login to MindSync</h3>
       <form id="loginForm">
-        <p id="error" class="error-message">Invalid credentials</p>
+        <p id="error" class="error-message"></p>
         <input type="email" id="email" placeholder="Email" required>
-        <input type="password" id="password" placeholder="Password" required>
+
+        <div class="password-wrapper">
+          <input type="password" id="password" placeholder="Password" required>
+          <i class="fa-solid fa-eye toggle-password" id="togglePassword"></i>
+        </div>
+
         <button type="submit">Login</button>
         <p class="loading" id="loading">⏳ Logging in...</p>
       </form>
@@ -154,15 +174,30 @@
   </footer>
 
 <script>
+  // Redirect if already logged in
+  if (localStorage.getItem("token")) {
+    window.location.href = "dashboard.html";
+  }
+
   const loginForm = document.getElementById("loginForm");
   const errorMsg = document.getElementById("error");
   const loading = document.getElementById("loading");
+  const togglePassword = document.getElementById("togglePassword");
+  const passwordInput = document.getElementById("password");
 
-  loginForm.addEventListener("submit", async function (e) {
+  // Show/Hide password toggle
+  togglePassword.addEventListener("click", () => {
+    const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+    passwordInput.setAttribute("type", type);
+    togglePassword.classList.toggle("fa-eye-slash");
+  });
+
+  // Login logic
+  loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
+    const password = passwordInput.value.trim();
 
     if (!email || !password) {
       errorMsg.textContent = "Please enter both email and password.";
@@ -174,27 +209,29 @@
     loading.style.display = "block";
 
     try {
-      const response = await fetch("https://mindsync-backend-c7v9.onrender.com/api/users/login", {
-        method: "POST",
+      const res = await fetch("https://mindsync-backend-c7v9.onrender.com/api/users/login", {
+        method: "POST", // ✅ Corrected
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
+      console.log("Response status:", res.status);
+      const data = await res.json();
+      console.log("Response data:", data);
+
       loading.style.display = "none";
 
-      if (response.ok) {
-        if (data.token) {
-          localStorage.setItem("token", data.token);
-        }
+      if (res.ok && data.token) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userEmail", email);
         window.location.href = "dashboard.html";
       } else {
         errorMsg.textContent = data.message || "Invalid credentials. Please try again.";
         errorMsg.style.display = "block";
       }
-    } catch (error) {
-      console.error("Login error:", error);
-      errorMsg.textContent = "Server error. Please try again later.";
+    } catch (err) {
+      console.error("Login error:", err);
+      errorMsg.textContent = "⚠️ Server error. Please try again later.";
       errorMsg.style.display = "block";
       loading.style.display = "none";
     }
