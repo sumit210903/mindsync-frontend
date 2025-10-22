@@ -116,7 +116,7 @@
     <p>&copy; 2025 MindSync. Empowering wellness through synergy 💙🌿</p>
   </footer>
 
- <script>
+<script>
 document.getElementById("signupForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -131,15 +131,19 @@ document.getElementById("signupForm").addEventListener("submit", async (e) => {
       body: JSON.stringify({ name, email, password }),
     });
 
+    console.log("➡️ Fetch sent, waiting for response...");
     const data = await response.json();
-    console.log("✅ Backend Response:", data);
+    console.log("✅ Backend responded with:", data);
 
-    if (response.ok) {
-      console.log("✅ Redirecting to profile-setup.html...");
-      localStorage.setItem("token", data.token || "dummy-token");
+    console.log("Response OK?:", response.ok);
+    console.log("Token present?:", !!data.token);
+
+    if (response.ok && data.token) {
+      console.log("🚀 Redirecting to profile setup...");
+      localStorage.setItem("token", data.token);
       window.location.href = "profile-setup.html";
     } else {
-      console.error("❌ Signup failed:", data.message);
+      console.warn("❌ Redirect condition not met. Showing alert instead.");
       alert(data.message || "Signup failed. Please try again.");
     }
   } catch (error) {
@@ -148,5 +152,6 @@ document.getElementById("signupForm").addEventListener("submit", async (e) => {
   }
 });
 </script>
+
 </body>
 </html>
