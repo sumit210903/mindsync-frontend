@@ -116,53 +116,64 @@
     <p>&copy; 2025 MindSync. Empowering wellness through synergy 💙🌿</p>
   </footer>
 
-  <script>
-  document.getElementById("signupForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
+ <script>
+document.getElementById("signupForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
-    const confirm = document.getElementById("confirm_password").value.trim();
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const confirm = document.getElementById("confirm_password").value.trim();
 
-    if (password !== confirm) {
-      alert("❌ Passwords do not match!");
+  if (password !== confirm) {
+    alert("❌ Passwords do not match!");
+    return;
+  }
+
+  const loadingMsg = document.getElementById("loadingMsg");
+  loadingMsg.style.display = "block";
+
+  try {
+    const response = await fetch("https://mindsync-backend-c7v9.onrender.com/api/users/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
+
+    const data = await response.json();
+    loadingMsg.style.display = "none";
+
+    console.log("🧠 Backend response:", data);
+
+    if (!response.ok) {
+      alert(data.message || "❌ Signup failed. Please try again.");
       return;
     }
 
-    const loadingMsg = document.getElementById("loadingMsg");
-    loadingMsg.style.display = "block";
+    // 🧩 Extract token safely (supporting multiple backend formats)
+    const token = data.token || data.jwt || data.user?.token || data.data?.token;
 
-    try {
-      const response = await fetch("https://mindsync-backend-c7v9.onrender.com/api/users/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
-      });
+    if (token) {
+      localStorage.setItem("token", token);
+      localStorage.setItem("userEmail", email);
+      console.log("✅ Token saved:", token);
 
-      const data = await response.json();
-      console.log("🧠 Backend response:", data);
-
-      loadingMsg.style.display = "none";
-
-      // ✅ Check for a real token from backend
-      if (response.ok && data.token && data.token !== "dummy-token") {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("userEmail", email);
-        console.log("✅ Token saved:", data.token);
-        alert("✅ Signup successful! Redirecting...");
-        window.location.href = "profile-setup.html";
-      } else {
-        console.warn("❌ Signup failed. Backend message:", data.message);
-        alert(data.message || "Signup failed. Please try again.");
-      }
-    } catch (error) {
-      loadingMsg.style.display = "none";
-      console.error("⚠️ Network or server error:", error);
-      alert("Server error. Please try again later.");
+      alert("✅ Signup successful! Redirecting...");
+      window.location.href = "profile-setup.html";
+    } else {
+      console.error("⚠️ No token returned from backend:", data);
+      alert("Signup successful but token missing — please log in manually.");
+      window.location.href = "login.html";
     }
-  });
-  </script>
+
+  } catch (error) {
+    loadingMsg.style.display = "none";
+    console.error("⚠️ Network or server error:", error);
+    alert("Server error. Please try again later.");
+  }
+});
+</script>
+
 
 </body>
 </html>

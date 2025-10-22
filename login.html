@@ -174,12 +174,12 @@
   </footer>
 
 <script>
-  // ✅ On page load, check if user already has a valid token
+  // ✅ On page load, check if a valid token already exists
   (async function checkExistingToken() {
     const existingToken = localStorage.getItem("token");
     if (existingToken && existingToken !== "undefined" && existingToken.trim() !== "") {
       try {
-        // optional backend token verification (if route exists)
+        // Optional backend token verification (if route exists)
         const verify = await fetch("https://mindsync-backend-c7v9.onrender.com/api/users/verify", {
           headers: { Authorization: `Bearer ${existingToken}` },
         });
@@ -193,7 +193,7 @@
           localStorage.removeItem("token");
         }
       } catch (err) {
-        console.error("Token check failed:", err);
+        console.error("⚠️ Token verification failed:", err);
         localStorage.removeItem("token");
       }
     } else {
@@ -240,28 +240,38 @@
       const data = await response.json();
       loading.style.display = "none";
 
-      if (response.ok && data.token) {
-        console.log("✅ Login successful:", data);
+      console.log("🧠 Backend login response:", data);
 
-        // ✅ Save actual JWT token
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("userEmail", email);
+      if (response.ok) {
+        // 🧩 Safely extract token (handle multiple response formats)
+        const token = data.token || data.jwt || data.user?.token || data.data?.token;
 
-        alert("✅ Login successful! Redirecting to profile setup...");
-        window.location.href = "profile-setup.html";
+        if (token && token !== "dummy-token") {
+          console.log("✅ Token received:", token);
+          localStorage.setItem("token", token);
+          localStorage.setItem("userEmail", email);
+
+          alert("✅ Login successful! Redirecting...");
+          window.location.href = "profile-setup.html";
+        } else {
+          console.warn("⚠️ No valid token returned from backend:", data);
+          errorMsg.textContent = "Login successful but token missing. Please try again.";
+          errorMsg.style.display = "block";
+        }
       } else {
-        console.warn("Login failed:", data);
+        console.warn("❌ Login failed:", data);
         errorMsg.textContent = data.message || "Invalid credentials. Please try again.";
         errorMsg.style.display = "block";
       }
     } catch (error) {
-      console.error("⚠️ Network error during login:", error);
+      console.error("⚠️ Network or server error:", error);
       loading.style.display = "none";
       errorMsg.textContent = "⚠️ Unable to connect to the server. Please try again later.";
       errorMsg.style.display = "block";
     }
   });
 </script>
+
 
 
 
