@@ -174,13 +174,32 @@
   </footer>
 
 <script>
-  // ✅ Redirect to dashboard if valid token already exists
-  const existingToken = localStorage.getItem("token");
-  if (existingToken && existingToken !== "undefined" && existingToken.trim() !== "") {
-    window.location.href = "dashboard.html";
-  } else {
-    localStorage.removeItem("token"); // clear invalid tokens
-  }
+  // ✅ On page load, check if user already has a valid token
+  (async function checkExistingToken() {
+    const existingToken = localStorage.getItem("token");
+    if (existingToken && existingToken !== "undefined" && existingToken.trim() !== "") {
+      try {
+        // optional backend token verification (if route exists)
+        const verify = await fetch("https://mindsync-backend-c7v9.onrender.com/api/users/verify", {
+          headers: { Authorization: `Bearer ${existingToken}` },
+        });
+
+        if (verify.ok) {
+          console.log("✅ Valid token, redirecting to dashboard...");
+          window.location.href = "dashboard.html";
+          return;
+        } else {
+          console.warn("⚠️ Token invalid, clearing...");
+          localStorage.removeItem("token");
+        }
+      } catch (err) {
+        console.error("Token check failed:", err);
+        localStorage.removeItem("token");
+      }
+    } else {
+      localStorage.removeItem("token");
+    }
+  })();
 
   const loginForm = document.getElementById("loginForm");
   const errorMsg = document.getElementById("error");
@@ -188,14 +207,14 @@
   const togglePassword = document.getElementById("togglePassword");
   const passwordInput = document.getElementById("password");
 
-  // 👁️ Show/Hide password toggle
+  // 👁️ Password visibility toggle
   togglePassword.addEventListener("click", () => {
     const isPassword = passwordInput.type === "password";
     passwordInput.type = isPassword ? "text" : "password";
     togglePassword.classList.toggle("fa-eye-slash");
   });
 
-  // 🔐 Login form logic
+  // 🔐 Login form submission
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -222,24 +241,28 @@
       loading.style.display = "none";
 
       if (response.ok && data.token) {
-        // ✅ Store token and email locally
+        console.log("✅ Login successful:", data);
+
+        // ✅ Save actual JWT token
         localStorage.setItem("token", data.token);
         localStorage.setItem("userEmail", email);
 
-        alert("✅ Login successful! Redirecting...");
-        window.location.href = "profile-setup.html"; // redirect to setup first
+        alert("✅ Login successful! Redirecting to profile setup...");
+        window.location.href = "profile-setup.html";
       } else {
+        console.warn("Login failed:", data);
         errorMsg.textContent = data.message || "Invalid credentials. Please try again.";
         errorMsg.style.display = "block";
       }
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("⚠️ Network error during login:", error);
       loading.style.display = "none";
       errorMsg.textContent = "⚠️ Unable to connect to the server. Please try again later.";
       errorMsg.style.display = "block";
     }
   });
 </script>
+
 
 
 </body>
