@@ -122,45 +122,56 @@
     <p>&copy; 2025 MindSync. Empowering wellness through synergy 💙🌿</p>
   </footer>
 
-  <script>
+<script>
   // 🌐 Responsive Menu
   const menuToggle = document.querySelector('.menu-toggle');
   const navLinks = document.querySelector('nav ul');
-  menuToggle.addEventListener('click', () => navLinks.classList.toggle('show'));
+  if (menuToggle && navLinks) {
+    menuToggle.addEventListener('click', () => navLinks.classList.toggle('show'));
+  }
 
   const profileForm = document.getElementById("profileForm");
   const loadingMsg = document.getElementById("loadingMsg");
   const previewImg = document.getElementById("previewImg");
+  const profilePicInput = document.getElementById("profilePic");
 
   // 🖼️ Show image preview
-  document.getElementById("profilePic").addEventListener("change", function() {
-    const file = this.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = e => {
-        previewImg.src = e.target.result;
-        previewImg.style.display = "block";
-      };
-      reader.readAsDataURL(file);
-    } else {
-      previewImg.style.display = "none";
-    }
-  });
+  if (profilePicInput) {
+    profilePicInput.addEventListener("change", function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          previewImg.src = e.target.result;
+          previewImg.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      } else {
+        previewImg.style.display = "none";
+      }
+    });
+  }
 
-  // 💾 Submit profile setup (works after signup, no extra login needed)
+  // 💾 Profile setup form submission
   profileForm.addEventListener("submit", async function (e) {
     e.preventDefault();
     loadingMsg.style.display = "block";
 
+    // 🧩 Get token from localStorage
     let token = localStorage.getItem("token");
 
-    // ⚠️ If token missing, user probably didn't come from signup
+    // 🧠 Debug: Log token to verify it’s being stored
+    console.log("Retrieved token from localStorage:", token);
+
+    // ⚠️ If token missing → redirect to signup
     if (!token) {
+      loadingMsg.style.display = "none";
       alert("Signup session expired. Please sign up again.");
       window.location.href = "signup.html";
       return;
     }
 
+    // 📦 Prepare form data
     const formData = new FormData();
     formData.append("age", document.getElementById("age").value.trim());
     formData.append("gender", document.getElementById("gender").value);
@@ -182,17 +193,20 @@
 
       if (response.ok) {
         alert("✅ Profile setup complete! Redirecting to your dashboard...");
+        localStorage.setItem("userProfile", JSON.stringify(data.user || {})); // optional caching
         window.location.href = "dashboard.html";
       } else {
+        console.warn("❌ Profile setup error:", data);
         alert(data.message || "Profile setup failed. Please try again.");
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("⚠️ Network or server error:", error);
       loadingMsg.style.display = "none";
-      alert("⚠️ Server error. Please try again later.");
+      alert("Server error. Please try again later.");
     }
   });
-  </script>
+</script>
+
 
 </body>
 </html>
