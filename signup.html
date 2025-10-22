@@ -116,58 +116,37 @@
     <p>&copy; 2025 MindSync. Empowering wellness through synergy 💙🌿</p>
   </footer>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const signupForm = document.getElementById("signupForm");
-      const loadingMsg = document.getElementById("loadingMsg");
+ <script>
+document.getElementById("signupForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-      signupForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        loadingMsg.style.display = "block";
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
 
-        const name = document.getElementById("name").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value.trim();
-        const confirmPassword = document.getElementById("confirm_password").value.trim();
-
-        if (password !== confirmPassword) {
-          loadingMsg.style.display = "none";
-          alert("❌ Passwords do not match!");
-          return;
-        }
-
-        try {
-          const response = await fetch("https://mindsync-backend-c7v9.onrender.com/api/users/signup", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, email, password }),
-          });
-
-          const data = await response.json();
-          console.log("🧠 Signup response:", data);
-          loadingMsg.style.display = "none";
-
-          if (response.ok) {
-            // store token if it exists
-            if (data.token) localStorage.setItem("token", data.token);
-            localStorage.setItem("userEmail", email);
-
-            console.log("✅ Signup successful, redirecting...");
-            // Smooth redirect (without alert)
-            setTimeout(() => {
-              window.location.href = "profile-setup.html";
-            }, 500);
-          } else {
-            console.error("❌ Signup failed:", data);
-            alert(data.message || "Signup failed. Please try again.");
-          }
-        } catch (err) {
-          loadingMsg.style.display = "none";
-          console.error("⚠️ Error during signup:", err);
-          alert("Server error. Please try again later.");
-        }
-      });
+  try {
+    const response = await fetch("https://mindsync-backend-c7v9.onrender.com/api/users/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
     });
-  </script>
+
+    const data = await response.json();
+    console.log("✅ Backend Response:", data);
+
+    if (response.ok) {
+      console.log("✅ Redirecting to profile-setup.html...");
+      localStorage.setItem("token", data.token || "dummy-token");
+      window.location.href = "profile-setup.html";
+    } else {
+      console.error("❌ Signup failed:", data.message);
+      alert(data.message || "Signup failed. Please try again.");
+    }
+  } catch (error) {
+    console.error("⚠️ Network or server error:", error);
+    alert("Server error. Please try again later.");
+  }
+});
+</script>
 </body>
 </html>
