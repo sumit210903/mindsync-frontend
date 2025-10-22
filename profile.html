@@ -1,178 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MindSync - Profile Setup</title>
-  <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
-  <!-- Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Quicksand', sans-serif; }
-    body { background: linear-gradient(135deg, #dff6f0, #b9e5e8, #a7c7e7); color: #2c3e50; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindSync - My Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Quicksand', sans-serif; }
+body { background: linear-gradient(135deg, #dff6f0, #b9e5e8, #a7c7e7); color: #2c3e50; }
 
-    /* Navbar */
-    nav {
-      background: rgba(255, 255, 255, 0.95);
-      padding: 15px 8%;
-      display: flex; justify-content: space-between; align-items: center;
-      position: sticky; top: 0; z-index: 1000;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      flex-wrap: wrap;
-    }
-    nav h1 { font-size: 26px; font-weight: 700; color: #006c59; display: flex; align-items: center; gap: 8px; }
-    nav h1 i { font-size: 28px; color: #006c59; animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.2);} }
-    nav ul { list-style: none; display: flex; gap: 25px; flex-wrap: wrap; }
-    nav ul li a {
-      text-decoration: none; color: #2c3e50; font-size: 16px; font-weight: 600;
-      display: flex; align-items: center; gap: 6px;
-      transition: color 0.3s, transform 0.3s;
-    }
-    nav ul li a:hover { color: #006c59; transform: scale(1.1); }
-    .menu-toggle { display: none; font-size: 24px; cursor: pointer; color: #006c59; }
+nav {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 15px 8%;
+  display: flex; justify-content: space-between; align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  flex-wrap: wrap;
+}
+nav h1 { font-size: 26px; font-weight: 700; color: #006c59; display: flex; align-items: center; gap: 8px; }
+nav h1 i { font-size: 28px; color: #006c59; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.2);} }
+nav ul { list-style: none; display: flex; gap: 25px; flex-wrap: wrap; }
+nav ul li a { text-decoration: none; color: #2c3e50; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 6px; transition: color 0.3s, transform 0.3s; }
+nav ul li a:hover { color: #006c59; transform: scale(1.1); }
+.menu-toggle { display: none; font-size: 24px; cursor: pointer; color: #006c59; }
+@media (max-width: 768px) {
+  nav ul { display: none; flex-direction: column; width: 100%; margin-top: 15px; gap: 15px; }
+  nav ul.show { display: flex; }
+  .menu-toggle { display: block; }
+}
 
-    @media (max-width: 768px) {
-      nav ul { display: none; flex-direction: column; width: 100%; margin-top: 15px; gap: 15px; }
-      nav ul.show { display: flex; }
-      .menu-toggle { display: block; }
-    }
+.profile-section { display: flex; justify-content: center; align-items: center; padding: 60px 8%; }
+.profile-card {
+  background: #fff; padding: 40px 30px; border-radius: 20px;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.08); max-width: 500px; width: 100%; text-align: center;
+}
+.profile-card img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin-bottom: 20px; cursor: pointer; }
+.profile-card input, .profile-card select, .profile-card textarea { width: 100%; padding: 12px 15px; margin-bottom: 15px; border-radius: 10px; border: 1px solid #ccc; font-size: 14px; }
+.profile-card textarea { resize: none; height: 80px; }
+.profile-card button { margin-top: 15px; padding: 10px 20px; border: none; background: #006c59; color: #fff; border-radius: 25px; cursor: pointer; transition: 0.3s; }
+.profile-card button:hover { background: #74ebd5; transform: scale(1.05); }
+.loading { margin-top: 10px; font-size: 14px; color: #006c59; display: none; }
 
-    /* Hero */
-    .hero { min-height: 25vh; display: flex; justify-content: center; align-items: center;
-      text-align: center; padding: 30px 20px;
-      background: linear-gradient(120deg, rgba(0,108,89,0.8), rgba(167,199,231,0.7));
-      color: #fff;
-    }
-    .hero h2 { font-size: 32px; font-weight: 700; }
-
-    /* Profile Setup */
-    .setup-section { display: flex; justify-content: center; align-items: center; padding: 60px 8%; }
-    .setup-card {
-      background: #fff; padding: 40px 30px; border-radius: 20px;
-      box-shadow: 0 8px 18px rgba(0,0,0,0.08); max-width: 500px; width: 100%; text-align: center;
-    }
-    .setup-card h3 { color: #006c59; margin-bottom: 25px; }
-    .setup-card input, .setup-card select, .setup-card textarea {
-      width: 100%; padding: 12px 15px; margin-bottom: 15px;
-      border-radius: 10px; border: 1px solid #ccc; font-size: 14px;
-    }
-    .setup-card textarea { resize: none; height: 80px; }
-    .setup-card button {
-      background: #006c59; color: #fff; padding: 12px 25px;
-      border: none; border-radius: 25px; font-size: 14px; font-weight: 600;
-      cursor: pointer; transition: background 0.3s, transform 0.3s; width: 100%;
-    }
-    .setup-card button:hover { background: #74ebd5; transform: scale(1.05); }
-    .loading { margin-top: 10px; font-size: 14px; color: #006c59; display: none; }
-
-    /* Footer */
-    footer { background: #006c59; color: #fff; text-align: center; padding: 22px; margin-top: 50px; font-size: 14px; }
-
-    @media (max-width: 480px) { .hero h2 { font-size: 26px; } .setup-card { padding: 30px 20px; } }
-  </style>
+footer { background: #006c59; color: #fff; text-align: center; padding: 22px; margin-top: 50px; font-size: 14px; }
+</style>
 </head>
 <body>
 
-  <!-- Navbar -->
-  <nav>
-    <h1><i class="fa-solid fa-brain"></i> MindSync</h1>
-    <div class="menu-toggle"><i class="fa-solid fa-bars"></i></div>
-    <ul>
-      <li><a href="dashboard.html"><i class="fa-solid fa-house"></i> Dashboard</a></li>
-      <li><a href="wellness.html"><i class="fa-solid fa-chart-line"></i> Wellness</a></li>
-      <li><a href="fitness.html"><i class="fa-solid fa-dumbbell"></i> Fitness</a></li>
-      <li><a href="nutrition.html"><i class="fa-solid fa-utensils"></i> Nutrition</a></li>
-      <li><a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a></li>
-      <li><a href="logout.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
-    </ul>
-  </nav>
+<nav>
+  <h1><i class="fa-solid fa-brain"></i> MindSync</h1>
+  <div class="menu-toggle"><i class="fa-solid fa-bars"></i></div>
+  <ul>
+    <li><a href="dashboard.html"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+    <li><a href="wellness.html"><i class="fa-solid fa-chart-line"></i> Wellness</a></li>
+    <li><a href="fitness.html"><i class="fa-solid fa-dumbbell"></i> Fitness</a></li>
+    <li><a href="nutrition.html"><i class="fa-solid fa-utensils"></i> Nutrition</a></li>
+    <li><a href="profile.html" class="active"><i class="fa-solid fa-user"></i> Profile</a></li>
+    <li><a href="logout.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+  </ul>
+</nav>
 
-  <!-- Hero -->
-  <section class="hero">
-    <h2>Set Up Your Profile</h2>
-  </section>
+<section class="profile-section">
+  <div class="profile-card" id="profileCard">
+    <p>Loading profile...</p>
+  </div>
+</section>
 
-  <!-- Profile Setup Section -->
-  <section class="setup-section">
-    <div class="setup-card">
-      <h3>Complete Your Profile</h3>
-      <form id="profileForm">
-        <input type="number" id="age" placeholder="Age" required>
-        <select id="gender" required>
-          <option value="" disabled selected>Select Gender</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-          <option value="Other">Other</option>
-        </select>
-        <input type="text" id="goal" placeholder="Your Wellness Goal (e.g., Stress Relief, Fitness)" required>
-        <textarea id="bio" placeholder="Short Bio (optional)"></textarea>
-        <input type="file" id="profilePic" accept="image/*">
-        <button type="submit">Save Profile</button>
-        <p class="loading" id="loadingMsg">Saving profile...</p>
-      </form>
-    </div>
-  </section>
+<footer>
+  <p>&copy; 2025 MindSync. Empowering wellness through synergy 💙🌿</p>
+</footer>
 
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2025 MindSync. Empowering wellness through synergy 💙🌿</p>
-  </footer>
+<script>
+const menuToggle = document.querySelector('.menu-toggle');
+const navLinks = document.querySelector('nav ul');
+menuToggle.addEventListener('click', () => navLinks.classList.toggle('show'));
 
-  <script>
-  // Navbar toggle for mobile
-  const menuToggle = document.querySelector('.menu-toggle');
-  const navLinks = document.querySelector('nav ul');
-  menuToggle.addEventListener('click', () => {
-    navLinks.classList.toggle('show');
-  });
+document.addEventListener("DOMContentLoaded", async () => {
+  const token = localStorage.getItem("token");
+  const profileCard = document.getElementById("profileCard");
+  if (!token) { window.location.href = "login.html"; return; }
 
-  const profileForm = document.getElementById("profileForm");
-  const loadingMsg = document.getElementById("loadingMsg");
+  try {
+    const response = await fetch("https://mindsync-backend-c7v9.onrender.com/api/users/profile", {
+      method: "GET",
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    const data = await response.json();
 
-  profileForm.addEventListener("submit", async function (e) {
-    e.preventDefault();
-
-    loadingMsg.style.display = "block";
-
-    const age = document.getElementById("age").value.trim();
-    const gender = document.getElementById("gender").value;
-    const goal = document.getElementById("goal").value.trim();
-    const bio = document.getElementById("bio").value.trim();
-
-    const formData = new FormData();
-    formData.append("age", age);
-    formData.append("gender", gender);
-    formData.append("goal", goal);
-    formData.append("bio", bio);
-
-    const profilePic = document.getElementById("profilePic").files[0];
-    if (profilePic) formData.append("profilePic", profilePic);
-
-    try {
-      const token = localStorage.getItem("token"); // ✅ token support
-      const response = await fetch("https://mindsync-backend-c7v9.onrender.com/api/users/profile-setup", {
-        method: "POST",
-        headers: token ? { "Authorization": `Bearer ${token}` } : {},
-        body: formData,
-      });
-
-      const data = await response.json();
-      loadingMsg.style.display = "none";
-
-      if (response.ok) {
-        alert("Profile setup complete! Redirecting to your account...");
-        window.location.href = "my-account.html";
-      } else {
-        alert(data.message || "Profile setup failed. Please try again.");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      loadingMsg.style.display = "none";
-      alert("Server error. Please try again later.");
+    if (!response.ok || !data.user) {
+      window.location.href = "profile-setup.html";
+      return;
     }
-  });
-  </script>
+
+    const user = data.user;
+    const profilePic = user.profilePic || "https://via.placeholder.com/120?text=No+Photo";
+
+    profileCard.innerHTML = `
+      <img src="${profilePic}" alt="Profile Picture" id="profileImage"/>
+      <input type="file" id="profilePic" style="display:none;">
+      <h3 id="name">${user.name}</h3>
+      <p><strong>Email:</strong> <span id="email">${user.email}</span></p>
+      <p><strong>Age:</strong> <span id="age">${user.age || ""}</span></p>
+      <p><strong>Gender:</strong> <span id="gender">${user.gender || ""}</span></p>
+      <p><strong>Goal:</strong> <span id="goal">${user.goal || ""}</span></p>
+      <p><strong>Bio:</strong> <span id="bio">${user.bio || ""}</span></p>
+      <button id="editBtn">Edit Profile</button>
+      <button id="saveBtn" style="display:none;">Save Changes</button>
+      <p class="loading" id="loadingMsg">Saving profile...</p>
+    `;
+
+    const editBtn = document.getElementById("editBtn");
+    const saveBtn = document.getElementById("saveBtn");
+    const loadingMsg = document.getElementById("loadingMsg");
+    const profileImage = document.getElementById("profileImage");
+    const fileInput = document.getElementById("profilePic");
+
+    profileImage.addEventListener("click", () => fileInput.click());
+
+    editBtn.addEventListener("click", () => {
+      document.getElementById("name").outerHTML = `<input type="text" id="nameInput" value="${user.name}" />`;
+      document.getElementById("age").outerHTML = `<input type="number" id="ageInput" value="${user.age || ""}" />`;
+      document.getElementById("gender").outerHTML = `
+        <select id="genderInput">
+          <option value="" ${!user.gender ? "selected" : ""}>Select Gender</option>
+          <option value="Male" ${user.gender === "Male" ? "selected" : ""}>Male</option>
+          <option value="Female" ${user.gender === "Female" ? "selected" : ""}>Female</option>
+          <option value="Other" ${user.gender === "Other" ? "selected" : ""}>Other</option>
+        </select>
+      `;
+      document.getElementById("goal").outerHTML = `<input type="text" id="goalInput" value="${user.goal || ""}" />`;
+      document.getElementById("bio").outerHTML = `<textarea id="bioInput">${user.bio || ""}</textarea>`;
+      editBtn.style.display = "none";
+      saveBtn.style.display = "inline-block";
+    });
+
+    saveBtn.addEventListener("click", async () => {
+      const nameVal = document.getElementById("nameInput").value.trim();
+      const ageVal = document.getElementById("ageInput").value.trim();
+      const genderVal = document.getElementById("genderInput").value;
+      const goalVal = document.getElementById("goalInput").value.trim();
+      const bioVal = document.getElementById("bioInput").value.trim();
+      const profilePicFile = fileInput.files[0];
+
+      const formData = new FormData();
+      formData.append("name", nameVal);
+      formData.append("age", ageVal);
+      formData.append("gender", genderVal);
+      formData.append("goal", goalVal);
+      formData.append("bio", bioVal);
+      if(profilePicFile) formData.append("profilePic", profilePicFile);
+
+      loadingMsg.style.display = "block";
+      saveBtn.disabled = true;
+
+      try {
+        const res = await fetch("https://mindsync-backend-c7v9.onrender.com/api/users/profile-setup", {
+          method: "POST",
+          headers: { "Authorization": `Bearer ${token}` },
+          body: formData
+        });
+        const result = await res.json();
+        loadingMsg.style.display = "none";
+        saveBtn.disabled = false;
+
+        if (res.ok) {
+          alert("Profile updated successfully!");
+          location.reload(); // Reload to show updated info
+        } else {
+          alert(result.message || "Failed to update profile.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Server error. Try again later.");
+        loadingMsg.style.display = "none";
+        saveBtn.disabled = false;
+      }
+    });
+
+  } catch (error) {
+    console.error("Error:", error);
+    profileCard.innerHTML = `<p>Error loading profile. Please refresh.</p>`;
+  }
+});
+</script>
 </body>
 </html>
