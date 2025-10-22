@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MindSync - Sign Up</title>
 
   <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet" />
   <!-- Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Quicksand', sans-serif; }
@@ -97,13 +97,13 @@
 
   <!-- Signup Section -->
   <section class="signup-section">
-    <div class="signup-card" id="signup-card">
+    <div class="signup-card">
       <h3>Sign Up for MindSync</h3>
       <form id="signupForm" autocomplete="off">
-        <input type="text" id="name" placeholder="Full Name" required>
-        <input type="email" id="email" placeholder="Email" required>
-        <input type="password" id="password" placeholder="Password" required>
-        <input type="password" id="confirm_password" placeholder="Confirm Password" required>
+        <input type="text" id="name" placeholder="Full Name" required />
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="password" id="password" placeholder="Password" required />
+        <input type="password" id="confirm_password" placeholder="Confirm Password" required />
         <button type="submit">Sign Up</button>
       </form>
       <p id="loadingMsg">Creating your account...</p>
@@ -117,11 +117,11 @@
   </footer>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener("DOMContentLoaded", () => {
       const signupForm = document.getElementById("signupForm");
       const loadingMsg = document.getElementById("loadingMsg");
 
-      signupForm.addEventListener("submit", async function (e) {
+      signupForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         loadingMsg.style.display = "block";
 
@@ -144,24 +144,26 @@
           });
 
           const data = await response.json();
+          console.log("🧠 Signup response:", data);
           loadingMsg.style.display = "none";
 
-          console.log("🧠 Signup response:", data);
+          if (response.ok) {
+            // store token if it exists
+            if (data.token) localStorage.setItem("token", data.token);
+            localStorage.setItem("userEmail", email);
 
-          if (response.ok && data.token) {
-            localStorage.setItem("token", data.token); // Save token for next step
-            localStorage.setItem("userEmail", email);  // Optional: store email for later use
-            console.log("✅ Token saved:", data.token);
-
-            alert("✅ Signup successful! Redirecting to profile setup...");
-            window.location.href = "profile-setup.html"; // Will redirect if file exists and browser allows
+            console.log("✅ Signup successful, redirecting...");
+            // Smooth redirect (without alert)
+            setTimeout(() => {
+              window.location.href = "profile-setup.html";
+            }, 500);
           } else {
+            console.error("❌ Signup failed:", data);
             alert(data.message || "Signup failed. Please try again.");
           }
-
-        } catch (error) {
+        } catch (err) {
           loadingMsg.style.display = "none";
-          console.error("⚠️ Error during signup:", error);
+          console.error("⚠️ Error during signup:", err);
           alert("Server error. Please try again later.");
         }
       });
