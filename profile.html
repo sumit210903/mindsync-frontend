@@ -78,37 +78,79 @@ menuToggle.addEventListener('click', () => navLinks.classList.toggle('show'));
 document.addEventListener("DOMContentLoaded", async () => {
   const token = localStorage.getItem("token");
   const profileCard = document.getElementById("profileCard");
-  if (!token) { window.location.href = "login.html"; return; }
 
-  try {
-    const response = await fetch("https://mindsync-backend-c7v9.onrender.com/api/users/profile", {
-      method: "GET",
-      headers: { "Authorization": `Bearer ${token}` }
-    });
-    const data = await response.json();
+  if (!token) {
+    window.location.href = "login.html";
+    return;
+  }
 
-    if (!response.ok || !data.user) {
-      window.location.href = "profile-setup.html";
-      return;
+  const API_BASE = "https://mindsync-backend-c7v9.onrender.com";
+
+  // ✅ Create success message element
+  const successMsg = document.createElement("div");
+  successMsg.id = "successMsg";
+  successMsg.style.position = "fixed";
+  successMsg.style.top = "20px";
+  successMsg.style.right = "20px";
+  successMsg.style.padding = "12px 20px";
+  successMsg.style.backgroundColor = "#2ecc71";
+  successMsg.style.color = "#fff";
+  successMsg.style.fontWeight = "600";
+  successMsg.style.borderRadius = "10px";
+  successMsg.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)";
+  successMsg.style.opacity = "0";
+  successMsg.style.transition = "opacity 0.5s ease";
+  document.body.appendChild(successMsg);
+
+  // ✅ Helper function to show success animation
+  function showSuccess(message) {
+    successMsg.textContent = message;
+    successMsg.style.opacity = "1";
+    setTimeout(() => {
+      successMsg.style.opacity = "0";
+    }, 2500);
+  }
+
+  // ✅ Load profile data
+  async function loadProfile() {
+    try {
+      const response = await fetch(`${API_BASE}/api/users/profile`, {
+        method: "GET",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      const data = await response.json();
+
+      if (!response.ok || !data.user) {
+        window.location.href = "profile-setup.html";
+        return;
+      }
+
+      const user = data.user;
+      const profilePic = user.profilePic || "https://via.placeholder.com/120?text=No+Photo";
+
+      profileCard.innerHTML = `
+        <img src="${profilePic}" alt="Profile Picture" id="profileImage"/>
+        <input type="file" id="profilePic" style="display:none;">
+        <h3 id="name">${user.name}</h3>
+        <p><strong>Email:</strong> <span id="email">${user.email}</span></p>
+        <p><strong>Age:</strong> <span id="age">${user.age || ""}</span></p>
+        <p><strong>Gender:</strong> <span id="gender">${user.gender || ""}</span></p>
+        <p><strong>Goal:</strong> <span id="goal">${user.goal || ""}</span></p>
+        <p><strong>Bio:</strong> <span id="bio">${user.bio || ""}</span></p>
+        <button id="editBtn">Edit Profile</button>
+        <button id="saveBtn" style="display:none;">Save Changes</button>
+        <p class="loading" id="loadingMsg">Saving profile...</p>
+      `;
+
+      setupEditAndSave(user);
+    } catch (error) {
+      console.error("Error:", error);
+      profileCard.innerHTML = `<p>Error loading profile. Please refresh.</p>`;
     }
+  }
 
-    const user = data.user;
-    const profilePic = user.profilePic || "https://via.placeholder.com/120?text=No+Photo";
-
-    profileCard.innerHTML = `
-      <img src="${profilePic}" alt="Profile Picture" id="profileImage"/>
-      <input type="file" id="profilePic" style="display:none;">
-      <h3 id="name">${user.name}</h3>
-      <p><strong>Email:</strong> <span id="email">${user.email}</span></p>
-      <p><strong>Age:</strong> <span id="age">${user.age || ""}</span></p>
-      <p><strong>Gender:</strong> <span id="gender">${user.gender || ""}</span></p>
-      <p><strong>Goal:</strong> <span id="goal">${user.goal || ""}</span></p>
-      <p><strong>Bio:</strong> <span id="bio">${user.bio || ""}</span></p>
-      <button id="editBtn">Edit Profile</button>
-      <button id="saveBtn" style="display:none;">Save Changes</button>
-      <p class="loading" id="loadingMsg">Saving profile...</p>
-    `;
-
+  // ✅ Edit / Save functionality
+  function setupEditAndSave(user) {
     const editBtn = document.getElementById("editBtn");
     const saveBtn = document.getElementById("saveBtn");
     const loadingMsg = document.getElementById("loadingMsg");
@@ -148,24 +190,25 @@ document.addEventListener("DOMContentLoaded", async () => {
       formData.append("gender", genderVal);
       formData.append("goal", goalVal);
       formData.append("bio", bioVal);
-      if(profilePicFile) formData.append("profilePic", profilePicFile);
+      if (profilePicFile) formData.append("profilePic", profilePicFile);
 
       loadingMsg.style.display = "block";
       saveBtn.disabled = true;
 
       try {
-        const res = await fetch("https://mindsync-backend-c7v9.onrender.com/api/users/profile-setup", {
+        const res = await fetch(`${API_BASE}/api/users/profile-setup`, {
           method: "POST",
           headers: { "Authorization": `Bearer ${token}` },
           body: formData
         });
+
         const result = await res.json();
         loadingMsg.style.display = "none";
         saveBtn.disabled = false;
 
         if (res.ok) {
-          alert("Profile updated successfully!");
-          location.reload(); // Reload to show updated info
+          await loadProfile(); // Reload with new data
+          showSuccess("✅ Profile updated successfully!");
         } else {
           alert(result.message || "Failed to update profile.");
         }
@@ -176,12 +219,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         saveBtn.disabled = false;
       }
     });
-
-  } catch (error) {
-    console.error("Error:", error);
-    profileCard.innerHTML = `<p>Error loading profile. Please refresh.</p>`;
   }
+
+  await loadProfile();
 });
 </script>
+
 </body>
 </html>
