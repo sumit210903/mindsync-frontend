@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
+/* ✅ Your existing styles unchanged */
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Quicksand', sans-serif; }
 body { background: linear-gradient(135deg, #dff6f0, #b9e5e8, #a7c7e7); color: #2c3e50; }
 
@@ -86,7 +87,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const API_BASE = "https://mindsync-backend-c7v9.onrender.com";
 
-  // ✅ Success Message
   function showSuccess(message) {
     const msg = document.createElement("div");
     msg.textContent = message;
@@ -101,9 +101,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     setTimeout(() => msg.remove(), 2500);
   }
 
-  // ✅ Load profile data
+  // ✅ Load user profile (ensure route matches your backend)
   async function loadProfile() {
     try {
+      // 🧩 If your backend route is /api/users/me — adjust here:
       const response = await fetch(`${API_BASE}/api/users/profile`, {
         method: "GET",
         headers: { "Authorization": `Bearer ${token}` }
@@ -111,13 +112,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const data = await response.json();
       if (!response.ok || !data.user) {
-        console.warn("No profile data found");
+        console.warn("No profile data found:", data);
         window.location.href = "profile-setup.html";
         return;
       }
 
       const user = data.user;
-      const profilePic = user.profilePic || "https://via.placeholder.com/120?text=No+Photo";
+
+      // ✅ Fix image path handling
+      const profilePic = user.profilePic
+        ? (user.profilePic.startsWith("http")
+            ? user.profilePic
+            : `${API_BASE}${user.profilePic.startsWith("/") ? "" : "/"}${user.profilePic}`)
+        : "https://via.placeholder.com/120?text=No+Photo";
 
       profileCard.innerHTML = `
         <img src="${profilePic}" alt="Profile Picture" id="profileImage"/>
@@ -126,8 +133,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         <p><strong>Email:</strong> <span id="email">${user.email}</span></p>
         <p><strong>Age:</strong> <span id="age">${user.age || ""}</span></p>
         <p><strong>Gender:</strong> <span id="gender">${user.gender || ""}</span></p>
-        <p><strong>Goal:</strong> <span id="goal">${user.goal || ""}</span></p>
-        <p><strong>Bio:</strong> <span id="bio">${user.bio || ""}</span></p>
+        <p><strong>Goal:</strong> <span id="goal">${user.goal || "—"}</span></p>
+        <p><strong>Bio:</strong> <span id="bio">${user.bio || "—"}</span></p>
         <button id="editBtn">Edit Profile</button>
         <button id="saveBtn" style="display:none;">Save Changes</button>
         <p class="loading" id="loadingMsg">Saving profile...</p>
@@ -140,7 +147,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // ✅ Edit / Save functionality
   function setupEditAndSave(user) {
     const editBtn = document.getElementById("editBtn");
     const saveBtn = document.getElementById("saveBtn");
@@ -186,7 +192,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       saveBtn.disabled = true;
 
       try {
-        // ✅ Correct endpoint: PUT /api/users/profile
         const res = await fetch(`${API_BASE}/api/users/profile`, {
           method: "PUT",
           headers: { "Authorization": `Bearer ${token}` },
@@ -215,7 +220,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadProfile();
 });
 </script>
-
 
 </body>
 </html>
