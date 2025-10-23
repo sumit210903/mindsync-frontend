@@ -86,29 +86,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const API_BASE = "https://mindsync-backend-c7v9.onrender.com";
 
-  // ✅ Create success message element
-  const successMsg = document.createElement("div");
-  successMsg.id = "successMsg";
-  successMsg.style.position = "fixed";
-  successMsg.style.top = "20px";
-  successMsg.style.right = "20px";
-  successMsg.style.padding = "12px 20px";
-  successMsg.style.backgroundColor = "#2ecc71";
-  successMsg.style.color = "#fff";
-  successMsg.style.fontWeight = "600";
-  successMsg.style.borderRadius = "10px";
-  successMsg.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)";
-  successMsg.style.opacity = "0";
-  successMsg.style.transition = "opacity 0.5s ease";
-  document.body.appendChild(successMsg);
-
-  // ✅ Helper function to show success animation
+  // ✅ Success Message
   function showSuccess(message) {
-    successMsg.textContent = message;
-    successMsg.style.opacity = "1";
-    setTimeout(() => {
-      successMsg.style.opacity = "0";
-    }, 2500);
+    const msg = document.createElement("div");
+    msg.textContent = message;
+    Object.assign(msg.style, {
+      position: "fixed", top: "20px", right: "20px", background: "#2ecc71",
+      color: "#fff", padding: "12px 20px", borderRadius: "10px",
+      fontWeight: "600", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", opacity: "0",
+      transition: "opacity 0.5s"
+    });
+    document.body.appendChild(msg);
+    setTimeout(() => (msg.style.opacity = "1"), 100);
+    setTimeout(() => msg.remove(), 2500);
   }
 
   // ✅ Load profile data
@@ -118,9 +108,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         method: "GET",
         headers: { "Authorization": `Bearer ${token}` }
       });
-      const data = await response.json();
 
+      const data = await response.json();
       if (!response.ok || !data.user) {
+        console.warn("No profile data found");
         window.location.href = "profile-setup.html";
         return;
       }
@@ -144,7 +135,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       setupEditAndSave(user);
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error loading profile:", error);
       profileCard.innerHTML = `<p>Error loading profile. Please refresh.</p>`;
     }
   }
@@ -168,8 +159,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           <option value="Male" ${user.gender === "Male" ? "selected" : ""}>Male</option>
           <option value="Female" ${user.gender === "Female" ? "selected" : ""}>Female</option>
           <option value="Other" ${user.gender === "Other" ? "selected" : ""}>Other</option>
-        </select>
-      `;
+        </select>`;
       document.getElementById("goal").outerHTML = `<input type="text" id="goalInput" value="${user.goal || ""}" />`;
       document.getElementById("bio").outerHTML = `<textarea id="bioInput">${user.bio || ""}</textarea>`;
       editBtn.style.display = "none";
@@ -196,8 +186,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       saveBtn.disabled = true;
 
       try {
-        const res = await fetch(`${API_BASE}/api/users/profile-setup`, {
-          method: "POST",
+        // ✅ Correct endpoint: PUT /api/users/profile
+        const res = await fetch(`${API_BASE}/api/users/profile`, {
+          method: "PUT",
           headers: { "Authorization": `Bearer ${token}` },
           body: formData
         });
@@ -207,7 +198,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         saveBtn.disabled = false;
 
         if (res.ok) {
-          await loadProfile(); // Reload with new data
+          await loadProfile();
           showSuccess("✅ Profile updated successfully!");
         } else {
           alert(result.message || "Failed to update profile.");
@@ -224,6 +215,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadProfile();
 });
 </script>
+
 
 </body>
 </html>
