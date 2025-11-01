@@ -1,21 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MindSync - Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MindSync - Wellness Synergy Dashboard</title>
+
   <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
   <!-- Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Quicksand', sans-serif;
-    }
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Quicksand',sans-serif; }
     body {
       background: linear-gradient(135deg, #dff6f0, #b9e5e8, #a7c7e7);
       color: #2c3e50;
@@ -24,168 +22,89 @@
 
     /* Navbar */
     nav {
-      background: rgba(255, 255, 255, 0.95);
-      padding: 15px 8%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
+      background: rgba(255,255,255,0.95);
+      padding: 12px 6%;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      position:sticky;
+      top:0;
+      z-index:1000;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      flex-wrap: wrap;
+      gap: 12px;
+      flex-wrap:wrap;
     }
+    nav h1 { font-size:22px; font-weight:700; color:#006c59; display:flex; align-items:center; gap:8px;}
+    nav h1 i { color:#006c59; font-size:26px; animation:pulse 2s infinite; }
+    nav .nav-right { display:flex; align-items:center; gap:12px; }
+    nav ul { list-style:none; display:flex; gap:18px; align-items:center; }
+    nav ul li a { text-decoration:none; color:#2c3e50; font-size:15px; font-weight:600; display:flex; gap:8px; align-items:center; padding:8px 10px; border-radius:8px;}
+    nav ul li a.active, nav ul li a:hover { color:#fff; background:#006c59; transform:translateY(-1px); }
 
-    nav h1 {
-      font-size: 26px;
-      font-weight: 700;
-      color: #006c59;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    @keyframes pulse { 0%,100% { transform:scale(1);} 50% { transform:scale(1.15);} }
 
-    nav h1 i {
-      color: #006c59;
-      font-size: 28px;
-      animation: pulse 2s infinite;
+    /* Main layout */
+    .container { padding: 28px 6%; max-width:1200px; margin:0 auto; }
+    .top-row { display:flex; gap:20px; align-items:center; justify-content:space-between; flex-wrap:wrap; margin-bottom:18px; }
+    .profile-card {
+      background:#fff; border-radius:14px; padding:12px 16px; box-shadow:0 8px 18px rgba(0,0,0,0.06);
+      display:flex; gap:12px; align-items:center;
     }
+    .profile-avatar { width:56px; height:56px; border-radius:50%; background:#e6f6f0; display:flex; align-items:center; justify-content:center; font-weight:700; color:#006c59; font-size:22px; overflow:hidden; }
+    .profile-info { display:flex; flex-direction:column; }
+    .profile-info small { color:#666; font-size:12px; }
 
-    nav ul {
-      list-style: none;
-      display: flex;
-      gap: 25px;
-      flex-wrap: wrap;
-    }
+    /* Grid dashboard */
+    .grid { display:grid; grid-template-columns: 1fr 2fr; gap:18px; align-items:start; }
+    .col { background:#fff; border-radius:14px; padding:16px; box-shadow:0 8px 18px rgba(0,0,0,0.06); }
+    .col h2 { color:#006c59; margin-bottom:8px; font-size:18px; }
 
-    nav ul li a {
-      text-decoration: none;
-      color: #2c3e50;
-      font-size: 16px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: color 0.3s, transform 0.3s;
-    }
+    /* quick stats tiles */
+    .tiles { display:flex; gap:12px; margin-top:8px; flex-wrap:wrap; }
+    .tile { flex:1; min-width:120px; background:#f8fffb; border-radius:10px; padding:12px; text-align:center; }
+    .tile strong { display:block; font-size:18px; margin-top:6px; }
 
-    nav ul li a:hover {
-      color: #006c59;
-      transform: scale(1.1);
-    }
+    /* charts area */
+    .charts { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px; }
+    .chart-box { height:260px; padding:10px; }
 
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.2); }
+    /* forms */
+    form.inline { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:10px; }
+    form.inline input[type="date"], form.inline input[type="number"], form.inline select, form.inline input[type="text"] {
+      padding:8px; border-radius:8px; border:1px solid #e2e8f0; min-width:120px;
     }
+    #exportCSVBtn {
+      background:#006c59; color:#fff; padding:8px 12px; border-radius:10px; border:none; cursor:pointer; font-weight:600;
+    }
+    
+    button.btn { background:#006c59; color:#fff; padding:8px 12px; border-radius:10px; border:none; cursor:pointer; font-weight:600; }
+    button.btn.secondary { background:#fff; color:#006c59; border:1px solid #006c59; }
 
-    /* Dashboard Container */
-    .dashboard {
-      padding: 50px 8%;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 30px;
-      animation: fadeIn 1s ease forwards;
-    }
+    /* section containers (fitness/nutrition/mental/profile pages within same file) */
+    .section { display:none; margin-top:14px; }
+    .section.active { display:block; }
 
-    @keyframes fadeIn {
-      0% { opacity: 0; transform: translateY(20px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
+    .toast { font-family: 'Quicksand', sans-serif; font-size: 14px; }
 
-    /* Dashboard Cards */
-    .card {
-      background: #fff;
-      border-radius: 20px;
-      padding: 25px 20px;
-      box-shadow: 0 8px 18px rgba(0,0,0,0.08);
-      text-align: center;
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
+    /* footer */
+    footer { background:#006c59; color:#fff; text-align:center; padding:18px 8px; margin-top:26px; border-radius:10px; }
 
-    .card:hover {
-      transform: translateY(-6px) scale(1.03);
-      box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+    /* responsive */
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+      .charts { grid-template-columns: 1fr; }
+      nav ul { display:none; }
+      .menu-toggle { display:block; }
     }
+    .menu-toggle { display:none; cursor:pointer; font-size:22px; color:#006c59; }
 
-    .card i {
-      font-size: 36px;
-      color: #006c59;
-      margin-bottom: 12px;
-      transition: transform 0.3s;
-    }
-
-    .card h3 {
-      font-size: 22px;
-      color: #006c59;
-      margin-bottom: 8px;
-    }
-
-    .card p {
-      font-size: 16px;
-      color: #555;
-    }
-
-    .card a {
-      display: inline-block;
-      margin-top: 12px;
-      padding: 8px 20px;
-      border-radius: 25px;
-      background: #006c59;
-      color: #fff;
-      text-decoration: none;
-      font-weight: 600;
-      transition: 0.3s;
-    }
-
-    .card a:hover {
-      background: #74ebd5;
-      color: #006c59;
-      transform: scale(1.05);
-    }
-
-    /* Footer */
-    footer {
-      background: #006c59;
-      color: #fff;
-      text-align: center;
-      padding: 22px;
-      margin-top: 50px;
-      font-size: 14px;
-    }
-
-    /* Responsive Navbar */
-    .menu-toggle {
-      display: none;
-      font-size: 24px;
-      cursor: pointer;
-      color: #006c59;
-    }
-
-    @media (max-width: 768px) {
-      nav {
-        flex-wrap: wrap;
-      }
-      nav ul {
-        display: none;
-        flex-direction: column;
-        width: 100%;
-        margin-top: 15px;
-        gap: 15px;
-      }
-      nav ul.show {
-        display: flex;
-      }
-      .menu-toggle {
-        display: block;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .dashboard { padding: 30px 5%; gap: 20px; }
-      .card h3 { font-size: 18px; }
-      .card p { font-size: 14px; }
-    }
+    /* small UI tweaks */
+    .muted { color:#666; font-size:13px; }
+    table { width:100%; border-collapse:collapse; font-size:13px; }
+    table th, table td { padding:8px 6px; text-align:left; border-bottom:1px solid #f1f5f9; }
+    .controls { display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; align-items:center; }
+    .goal-progress { margin-top:8px; width:100%; height:10px; background:#eef9f6; border-radius:99px; overflow:hidden; }
+    .goal-fill { height:100%; background:linear-gradient(90deg,#00c6a7,#006c59); width:0%; }
   </style>
 </head>
 <body>
@@ -193,69 +112,468 @@
   <!-- Navbar -->
   <nav>
     <h1><i class="fa-solid fa-brain"></i> MindSync</h1>
-    <div class="menu-toggle"><i class="fa-solid fa-bars"></i></div>
-    <ul>
-      <li><a href="dashboard.html"><i class="fa-solid fa-house"></i> Dashboard</a></li>
-      <li><a href="wellness.html"><i class="fa-solid fa-chart-line"></i> Wellness</a></li>
-      <li><a href="fitness.html"><i class="fa-solid fa-dumbbell"></i> Fitness</a></li>
-      <li><a href="nutrition.html"><i class="fa-solid fa-utensils"></i> Nutrition</a></li>
-      <li><a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a></li>
-      <li><a href="logout.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
-    </ul>
+
+    <div class="nav-right">
+      <div class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></div>
+      <ul id="mainNav">
+        <li><a href="#" class="nav-link active" data-section="dashboard"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+        <li><a href="#" class="nav-link" data-section="fitness"><i class="fa-solid fa-dumbbell"></i> Fitness</a></li>
+        <li><a href="#" class="nav-link" data-section="nutrition"><i class="fa-solid fa-utensils"></i> Nutrition</a></li>
+        <li><a href="#" class="nav-link" data-section="mental"><i class="fa-solid fa-heart"></i> Mental</a></li>
+        <li><a href="#" class="nav-link" data-section="profile"><i class="fa-solid fa-user"></i> Profile</a></li>
+        <li><a href="logout.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+      </ul>
+    </div>
   </nav>
 
-  <!-- Dashboard Cards -->
-  <section class="dashboard">
-    <div class="card">
-      <i class="fa-solid fa-heart"></i>
-      <h3>Wellness Plan</h3>
-      <p>View and manage your personalized wellness plan</p>
-      <a href="wellness.html">Go</a>
-    </div>
-    <div class="card">
-      <i class="fa-solid fa-spa"></i>
-      <h3>Meditation</h3>
-      <p>Start guided meditation and track your mindfulness streaks</p>
-      <a href="meditation.html">Go</a>
-    </div>
-    <div class="card">
-      <i class="fa-solid fa-dumbbell"></i>
-      <h3>Fitness Tracker</h3>
-      <p>Log your exercises and track your activity progress</p>
-      <a href="fitness.html">Go</a>
-    </div>
-    <div class="card">
-      <i class="fa-solid fa-utensils"></i>
-      <h3>Nutrition</h3>
-      <p>Log meals, track calories and get healthy recipe suggestions</p>
-      <a href="nutrition.html">Go</a>
-    </div>
-    <div class="card">
-      <i class="fa-solid fa-users"></i>
-      <h3>Community</h3>
-      <p>Join forums, challenges and interact with other users</p>
-      <a href="community-dashboard.html">Go</a>
-    </div>
-    <div class="card">
-      <i class="fa-solid fa-blog"></i>
-      <h3>Blog & Resources</h3>
-      <p>Read wellness articles, tips, and tutorials</p>
-      <a href="blog-dashboard.html">Go</a>
-    </div>
-  </section>
+  <div class="container">
+    <!-- Top Row: profile + quick actions -->
+    <div class="top-row">
+      <div class="profile-card">
+        <div class="profile-avatar" id="avatarEl">U</div>
+        <div class="profile-info">
+          <strong id="profileName">User</strong>
+          <small id="profileEmail" class="muted">local demo • data stored in browser</small>
+        </div>
+        <div style="margin-left:12px;">
+          <button class="btn" id="quickAddBtn">Quick Add</button>
+        </div>
+      </div>
+<button id="exportCSVBtn">Export CSV</button>
 
-  <!-- Footer -->
-  <footer>
+      <div class="profile-card" style="justify-content:flex-end; gap:14px;">
+        <div style="text-align:right;">
+          <div class="muted">Today's date</div>
+          <strong id="todayDate"></strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grid: left summary / right charts -->
+    <div class="grid">
+      <!-- Left column: summary + inputs -->
+      <div class="col">
+        <h2>Overview</h2>
+        <div class="tiles">
+          <div class="tile">
+            <div class="muted">Avg Steps</div>
+            <strong id="statAvgSteps">0</strong>
+          </div>
+          <div class="tile">
+            <div class="muted">Avg Calories</div>
+            <strong id="statAvgCalories">0</strong>
+          </div>
+          <div class="tile">
+            <div class="muted">Avg Mood</div>
+            <strong id="statAvgMood">0</strong>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;">
+          <h3 style="color:#006c59; margin-bottom:8px;">Add Entry</h3>
+          <form id="addEntryForm" class="inline" onsubmit="return false;">
+            <select id="entryType">
+              <option value="fitness">Fitness (steps)</option>
+              <option value="nutrition">Nutrition (calories)</option>
+              <option value="mental">Mental (mood 1-5)</option>
+            </select>
+            <input type="date" id="entryDate" required />
+            <input type="number" id="entryValue" placeholder="Value" required />
+            <input type="text" id="entryNote" placeholder="Note (optional)" />
+            <button class="btn" id="entryAddBtn">Add</button>
+            <button class="btn secondary" id="entryReset">Reset</button>
+          </form>
+        </div>
+
+        <div style="margin-top:12px;">
+          <h3 style="color:#006c59; margin-bottom:8px;">Goals</h3>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <div>
+              <div class="muted">Daily Steps</div>
+              <input type="number" id="goalSteps" value="8000" style="padding:8px;border-radius:8px;border:1px solid #e2e8f0; min-width:100px;" />
+            </div>
+            <div>
+              <div class="muted">Daily Calories</div>
+              <input type="number" id="goalCalories" value="2000" style="padding:8px;border-radius:8px;border:1px solid #e2e8f0; min-width:100px;" />
+            </div>
+            <div>
+              <div class="muted">Target Mood (1-5)</div>
+              <input type="number" id="goalMood" value="4" min="1" max="5" style="padding:8px;border-radius:8px;border:1px solid #e2e8f0; width:80px;" />
+            </div>
+            <div>
+              <button class="btn" id="saveGoals">Save Goals</button>
+            </div>
+          </div>
+          <div style="margin-top:8px;">
+            <div class="muted">Steps progress (today)</div>
+            <div class="goal-progress"><div id="goalFillSteps" class="goal-fill"></div></div>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <h3 style="color:#006c59; margin-bottom:8px;">Recent Entries</h3>
+          <table>
+            <thead>
+              <tr><th>Date</th><th>Tracker</th><th>Value</th></tr>
+            </thead>
+            <tbody id="recentEntries">
+              <!-- auto filled -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Right column: charts & sections -->
+      <div class="col">
+        <!-- Dashboard charts (default) -->
+        <div id="section-dashboard" class="section active">
+          <h2>Visualizations</h2>
+          <div class="charts">
+            <div class="chart-box col" style="padding:10px;">
+              <canvas id="stepsChart"></canvas>
+            </div>
+            <div class="chart-box col" style="padding:10px;">
+              <canvas id="caloriesChart"></canvas>
+            </div>
+            <div class="chart-box col" style="padding:10px;">
+              <canvas id="moodChart"></canvas>
+            </div>
+            <div class="chart-box col" style="padding:10px;">
+              <canvas id="nutritionPie"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fitness section -->
+        <div id="section-fitness" class="section">
+          <h2>Fitness Tracker</h2>
+          <p class="muted">Log steps and see trends. Set daily step goals and track completion.</p>
+          <div style="margin-top:10px;">
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+              <input type="date" id="fitDate" />
+              <input type="number" id="fitValue" placeholder="Steps" />
+              <input type="text" id="fitNote" placeholder="Note (optional)" />
+              <button class="btn" id="fitAdd">Add Steps</button>
+              <button class="btn secondary" id="fitClear">Clear Fitness Data</button>
+            </div>
+
+            <div style="margin-top:12px;">
+              <canvas id="fitnessOnlyChart" style="height:220px;"></canvas>
+            </div>
+
+            <div style="margin-top:12px;">
+              <strong>Total Steps:</strong> <span id="totalSteps">0</span> &nbsp;&nbsp; <strong>Avg Steps:</strong> <span id="avgSteps">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nutrition section -->
+        <div id="section-nutrition" class="section">
+          <h2>Nutrition Tracker</h2>
+          <p class="muted">Log calories and track nutrition balance.</p>
+          <div style="margin-top:10px;">
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+              <input type="date" id="nutDate" />
+              <input type="number" id="nutValue" placeholder="Calories" />
+              <select id="nutType">
+                <option value="breakfast">Breakfast</option>
+                <option value="lunch">Lunch</option>
+                <option value="dinner">Dinner</option>
+                <option value="snack">Snack</option>
+              </select>
+              <input type="text" id="nutNote" placeholder="Note" />
+              <button class="btn" id="nutAdd">Add Meal</button>
+              <button class="btn secondary" id="nutClear">Clear Nutrition Data</button>
+            </div>
+
+            <div style="margin-top:12px;">
+              <canvas id="nutritionOnlyChart" style="height:220px;"></canvas>
+            </div>
+
+            <div style="margin-top:12px;">
+              <strong>Total Calories:</strong> <span id="totalCalories">0</span> &nbsp;&nbsp; <strong>Avg Calories:</strong> <span id="avgCalories">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mental section -->
+        <div id="section-mental" class="section">
+          <h2>Mental Health Tracker</h2>
+          <p class="muted">Rate your mood (1 low — 5 high) and record notes.</p>
+          <div style="margin-top:10px;">
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+              <input type="date" id="menDate" />
+              <input type="number" id="menValue" placeholder="Mood 1-5" min="1" max="5" />
+              <input type="text" id="menNote" placeholder="Note" />
+              <button class="btn" id="menAdd">Add Mood</button>
+              <button class="btn secondary" id="menClear">Clear Mental Data</button>
+            </div>
+
+            <div style="margin-top:12px;">
+              <canvas id="mentalOnlyChart" style="height:220px;"></canvas>
+            </div>
+
+            <div style="margin-top:12px;">
+              <strong>Avg Mood:</strong> <span id="avgMood">0</span>
+            </div>
+
+            <div style="margin-top:12px;">
+              <h3 style="color:#006c59;">Recent Moods</h3>
+              <ul id="recentMoods" style="list-style:none; padding-left:0;"></ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile section -->
+        <div id="section-profile" class="section">
+          <h2>Profile</h2>
+          <p class="muted">Edit your name and avatar (URL). Data is stored locally for the demo.</p>
+          <div style="margin-top:12px; display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+            <div>
+              <div class="profile-avatar" id="profileAvatarPreview" style="width:90px;height:90px;font-size:28px;">U</div>
+            </div>
+            <div style="flex:1; min-width:220px;">
+              <label class="muted">Name</label>
+              <input type="text" id="profName" style="width:100%; padding:8px; border-radius:8px; border:1px solid #e2e8f0;" />
+              <label class="muted" style="margin-top:8px; display:block;">Avatar URL</label>
+              <input type="text" id="profAvatar" style="width:100%; padding:8px; border-radius:8px; border:1px solid #e2e8f0;" />
+              <div style="margin-top:8px;">
+                <button class="btn" id="saveProfile">Save Profile</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <footer>
     <p>&copy; 2025 MindSync. Empowering wellness through synergy 💙🌿</p>
   </footer>
+  </div>
 
   <script>
-    // Navbar toggle for mobile
-    const menuToggle = document.querySelector('.menu-toggle');
-    const navLinks = document.querySelector('nav ul');
-    menuToggle.addEventListener('click', () => {
-      navLinks.classList.toggle('show');
+/*************************************************************************
+ * Wellness Synergy Dashboard – Enhanced v2
+ * Features:
+ * - Chart.js graphs
+ * - Fetch API integration (Render backend)
+ * - LocalStorage fallback for offline usage
+ * - Toast messages, validations, CSV export
+ *************************************************************************/
+
+// --- Utility helpers ---
+const qs = (s) => document.querySelector(s);
+const qsa = (s) => document.querySelectorAll(s);
+const TODAY = new Date().toISOString().slice(0,10);
+
+// --- Toast Notification ---
+function showToast(msg) {
+  const toast = document.createElement('div');
+  toast.textContent = msg;
+  toast.className = 'toast';
+  Object.assign(toast.style, {
+    position: 'fixed', bottom: '20px', right: '20px',
+    background: '#006c59', color: '#fff', padding: '10px 15px',
+    borderRadius: '8px', boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+    zIndex: '9999', transition: 'opacity 0.5s', opacity: '1'
+  });
+  document.body.appendChild(toast);
+  setTimeout(()=>{toast.style.opacity='0'; setTimeout(()=>toast.remove(),500)}, 2500);
+}
+
+// --- Initial state shape ---
+const initialState = {
+  profile: { name: 'User', avatar: '' },
+  goals: { steps: 8000, calories: 2000, mood: 4 },
+  fitness: [], nutrition: [], mental: []
+};
+
+// --- Load / Save State ---
+function loadState() {
+  try {
+    const raw = localStorage.getItem('wellness_synergy_v1');
+    return raw ? JSON.parse(raw) : JSON.parse(JSON.stringify(initialState));
+  } catch { return JSON.parse(JSON.stringify(initialState)); }
+}
+function saveState() {
+  localStorage.setItem('wellness_synergy_v1', JSON.stringify(state));
+}
+
+// --- State ---
+let state = loadState();
+
+// --- Initialize UI Defaults ---
+qs('#todayDate').textContent = new Date().toLocaleDateString();
+['entryDate','fitDate','nutDate','menDate'].forEach(id => qs('#'+id).value = TODAY);
+
+// --- Chart Instances ---
+let charts = {};
+function initCharts() {
+  const makeChart = (id, type, label, opts={}) => new Chart(qs(id).getContext('2d'), {
+    type, data:{labels:[], datasets:[{label, data:[], fill:true, tension:0.3}]},
+    options:{responsive:true, maintainAspectRatio:false, ...opts}
+  });
+  charts.stepsChart = makeChart('#stepsChart','line','Steps',{plugins:{title:{display:true,text:'Steps Over Time'}}});
+  charts.caloriesChart = makeChart('#caloriesChart','line','Calories',{plugins:{title:{display:true,text:'Calories Over Time'}}});
+  charts.moodChart = makeChart('#moodChart','bar','Mood (1-5)',{scales:{y:{min:0,max:5}},plugins:{title:{display:true,text:'Mood Over Time'}}});
+  charts.nutritionPie = new Chart(qs('#nutritionPie').getContext('2d'),{
+    type:'pie',data:{labels:['Protein','Carbs','Fats','Other'],datasets:[{data:[30,50,15,5]}]},
+    options:{responsive:true,plugins:{title:{display:true,text:'Nutrition Mix (Sample)'}}}
+  });
+  charts.fitnessOnly = makeChart('#fitnessOnlyChart','line','Steps');
+  charts.nutritionOnly = makeChart('#nutritionOnlyChart','line','Calories');
+  charts.mentalOnly = makeChart('#mentalOnlyChart','bar','Mood',{scales:{y:{min:0,max:5}}});
+}
+
+// --- Helpers ---
+const seriesFromArray = arr => {
+  const sorted = [...arr].sort((a,b)=>a.date.localeCompare(b.date));
+  return { labels: sorted.map(r=>r.date), values: sorted.map(r=>r.value) };
+};
+
+// --- Render Functions ---
+function renderProfile() {
+  qs('#profileName').textContent = state.profile.name || 'User';
+  qs('#profName').value = state.profile.name || '';
+  qs('#profAvatar').value = state.profile.avatar || '';
+  const avatarEl = qs('#avatarEl'), preview = qs('#profileAvatarPreview');
+  if (state.profile.avatar) {
+    const img = `<img src="${state.profile.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+    avatarEl.innerHTML = img; preview.innerHTML = img;
+  } else {
+    const initial = (state.profile.name||'U')[0].toUpperCase();
+    avatarEl.textContent = initial; preview.textContent = initial;
+  }
+}
+
+function renderStats() {
+  const avg = arr => arr.length ? (arr.reduce((s,r)=>s+r.value,0)/arr.length).toFixed(1) : 0;
+  const total = arr => arr.reduce((s,r)=>s+r.value,0);
+  qs('#statAvgSteps').textContent = avg(state.fitness);
+  qs('#statAvgCalories').textContent = avg(state.nutrition);
+  qs('#statAvgMood').textContent = avg(state.mental);
+  qs('#totalSteps').textContent = total(state.fitness);
+  qs('#avgSteps').textContent = avg(state.fitness);
+  qs('#totalCalories').textContent = total(state.nutrition);
+  qs('#avgCalories').textContent = avg(state.nutrition);
+  qs('#avgMood').textContent = avg(state.mental);
+
+  const recent = [
+    ...state.fitness.map(f=>({date:f.date, tracker:'Fitness', value:f.value})),
+    ...state.nutrition.map(n=>({date:n.date, tracker:'Nutrition', value:n.value})),
+    ...state.mental.map(m=>({date:m.date, tracker:'Mental', value:m.value}))
+  ].sort((a,b)=>b.date.localeCompare(a.date));
+  qs('#recentEntries').innerHTML = recent.slice(0,8).map(r=>`<tr><td>${r.date}</td><td>${r.tracker}</td><td>${r.value}</td></tr>`).join('') 
+    || '<tr><td colspan="3" class="muted">No entries yet</td></tr>';
+
+  qs('#recentMoods').innerHTML = state.mental.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,6)
+    .map(m=>`<li style="padding:8px 6px;border-radius:8px;background:#f6fffb;margin-bottom:6px;">${m.date} — Mood: <strong>${m.value}</strong> ${m.note ? '— '+m.note : ''}</li>`).join('')
+    || '<li class="muted">No mood entries yet</li>';
+
+  const todaySteps = state.fitness.filter(f=>f.date === TODAY).reduce((s,r)=>s+r.value,0);
+  const pct = Math.min(100, Math.round((todaySteps / (state.goals.steps || 1))*100));
+  qs('#goalFillSteps').style.width = pct + '%';
+}
+
+function renderCharts() {
+  const sFit = seriesFromArray(state.fitness), sNut = seriesFromArray(state.nutrition), sMen = seriesFromArray(state.mental);
+  charts.stepsChart.data.labels = sFit.labels; charts.stepsChart.data.datasets[0].data = sFit.values; charts.stepsChart.update();
+  charts.caloriesChart.data.labels = sNut.labels; charts.caloriesChart.data.datasets[0].data = sNut.values; charts.caloriesChart.update();
+  charts.moodChart.data.labels = sMen.labels; charts.moodChart.data.datasets[0].data = sMen.values; charts.moodChart.update();
+  charts.fitnessOnly.data.labels = sFit.labels; charts.fitnessOnly.data.datasets[0].data = sFit.values; charts.fitnessOnly.update();
+  charts.nutritionOnly.data.labels = sNut.labels; charts.nutritionOnly.data.datasets[0].data = sNut.values; charts.nutritionOnly.update();
+  charts.mentalOnly.data.labels = sMen.labels; charts.mentalOnly.data.datasets[0].data = sMen.values; charts.mentalOnly.update();
+}
+
+// --- Add Entry Function ---
+function addEntry(type, payload) {
+  if (!payload.date || payload.value==='' || isNaN(payload.value)) return showToast('⚠️ Enter valid numeric value.');
+  if (type==='mental' && (payload.value<1 || payload.value>5)) return showToast('Mood must be between 1–5.');
+  state[type].push({ ...payload, value:Number(payload.value) });
+  saveState(); renderStats(); renderCharts();
+}
+
+// --- Event Listeners ---
+qs('#entryAddBtn').addEventListener('click', ()=>{
+  addEntry(qs('#entryType').value, {date:qs('#entryDate').value,value:qs('#entryValue').value,note:qs('#entryNote').value});
+  qs('#entryValue').value=''; qs('#entryNote').value='';
+});
+['fit','nut','men'].forEach(k=>{
+  qs(`#${k}Add`).addEventListener('click',()=>{
+    const val = qs(`#${k}Value`).value;
+    const obj = {date:qs(`#${k}Date`).value||TODAY,value:val,note:qs(`#${k}Note`).value};
+    if(k==='nut') obj.type=qs('#nutType').value;
+    addEntry(k==='men'?'mental':k==='nut'?'nutrition':'fitness', obj);
+    qs(`#${k}Value`).value=''; qs(`#${k}Note`).value='';
+  });
+});
+['fit','nut','men'].forEach(k=>{
+  qs(`#${k}Clear`).addEventListener('click',()=>{
+    if(confirm(`Clear all ${k} data?`)){state[k==='men'?'mental':k==='nut'?'nutrition':'fitness']=[];saveState();renderStats();renderCharts();}
+  });
+});
+qs('#saveGoals').addEventListener('click',()=>{
+  state.goals = {
+    steps:Number(qs('#goalSteps').value)||0,
+    calories:Number(qs('#goalCalories').value)||0,
+    mood:Number(qs('#goalMood').value)||0
+  };
+  saveState(); renderStats(); showToast('🎯 Goals saved!');
+});
+qs('#saveProfile').addEventListener('click',()=>{
+  state.profile = {name:qs('#profName').value.trim()||'User', avatar:qs('#profAvatar').value.trim()};
+  saveState(); renderProfile(); showToast('👤 Profile updated!');
+});
+qs('#quickAddBtn').addEventListener('click',()=>{window.scrollTo({top:300,behavior:'smooth'});qs('#entryType').focus();});
+
+// Navigation
+function showSection(key){
+  qsa('.section').forEach(s=>s.classList.remove('active'));
+  qs('#section-'+key)?.classList.add('active');
+  qsa('.nav-link').forEach(a=>a.classList.remove('active'));
+  qsa(`.nav-link[data-section="${key}"]`)?.classList.add('active');
+  if(key==='dashboard'){renderCharts();renderStats();}
+}
+qsa('.nav-link').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();showSection(a.dataset.section)}));
+qs('#menuToggle').addEventListener('click',()=>{const nav=qs('#mainNav');nav.style.display=(nav.style.display==='flex')?'none':'flex';});
+
+// CSV Export
+qs('#exportCSVBtn')?.addEventListener('click',()=>{
+  const rows=[['type','date','value','note']];
+  state.fitness.forEach(r=>rows.push(['fitness',r.date,r.value,r.note||'']));
+  state.nutrition.forEach(r=>rows.push(['nutrition',r.date,r.value,r.note||'']));
+  state.mental.forEach(r=>rows.push(['mental',r.date,r.value,r.note||'']));
+  const blob=new Blob([rows.map(r=>r.join(',')).join('\n')],{type:'text/csv'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='wellness-data.csv';a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+// --- Fetch Dashboard Data from Backend (optional) ---
+async function fetchDashboardData() {
+  const token = localStorage.getItem('token');
+  if(!token) return console.warn('No token found — using local data.');
+  try {
+    const res = await fetch('https://mindsync-backend.onrender.com/api/dashboard',{
+      headers:{'Authorization':`Bearer ${token}`}
     });
-  </script>
+    const result = await res.json();
+    if(result.success){
+      const d=result.data;
+      state.fitness = d.fitness.map((v,i)=>({date:`2025-10-${i+25}`,value:v}));
+      state.nutrition = d.nutrition.map((v,i)=>({date:`2025-10-${i+25}`,value:v}));
+      state.mental = d.mentalHealth.map((v,i)=>({date:`2025-10-${i+25}`,value:v}));
+      state.profile.name = d.name;
+      state.profile.avatar = d.profilePic;
+      saveState(); renderProfile(); renderStats(); renderCharts();
+    } else console.error('Dashboard fetch failed:',result.message);
+  } catch(err){ console.error('Dashboard fetch error:',err); }
+}
+
+// --- Initialize ---
+initCharts(); renderProfile(); renderStats(); renderCharts(); fetchDashboardData();
+
+</script>
+
 </body>
 </html>
