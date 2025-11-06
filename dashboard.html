@@ -2,251 +2,673 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MindSync - Wellness Tracker Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MindSync - Wellness Synergy Dashboard</title>
 
-  <!-- Fonts & Icons -->
+  <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Quicksand', sans-serif; }
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Quicksand',sans-serif; }
     body {
       background: linear-gradient(135deg, #dff6f0, #b9e5e8, #a7c7e7);
       color: #2c3e50;
       min-height: 100vh;
-      display: flex; flex-direction: column;
     }
 
     /* Navbar */
     nav {
-      background: rgba(255, 255, 255, 0.9);
-      padding: 15px 8%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      flex-wrap: wrap;
+      background: rgba(255,255,255,0.95);
+      padding: 12px 6%;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      position:sticky;
+      top:0;
+      z-index:1000;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      gap: 12px;
+      flex-wrap:wrap;
     }
-    nav h1 { font-size: 26px; color: #006c59; display: flex; align-items: center; gap: 8px; }
-    nav h1 i { color: #006c59; }
-    nav ul { list-style: none; display: flex; gap: 25px; flex-wrap: wrap; }
-    nav ul li a { color: #2c3e50; text-decoration: none; font-weight: 600; transition: 0.3s; }
-    nav ul li a:hover { color: #006c59; }
-    .menu-toggle { display: none; font-size: 22px; cursor: pointer; }
+    nav h1 { font-size:22px; font-weight:700; color:#006c59; display:flex; align-items:center; gap:8px;}
+    nav h1 i { color:#006c59; font-size:26px; animation:pulse 2s infinite; }
+    nav .nav-right { display:flex; align-items:center; gap:12px; }
+    nav ul { list-style:none; display:flex; gap:18px; align-items:center; }
+    nav ul li a { text-decoration:none; color:#2c3e50; font-size:15px; font-weight:600; display:flex; gap:8px; align-items:center; padding:8px 10px; border-radius:8px;}
+    nav ul li a.active, nav ul li a:hover { color:#fff; background:#006c59; transform:translateY(-1px); }
 
-    @media (max-width: 768px) {
-      .menu-toggle { display: block; }
-      nav ul { display: none; width: 100%; flex-direction: column; gap: 15px; margin-top: 10px; }
-      nav ul.show { display: flex; }
-    }
+    @keyframes pulse { 0%,100% { transform:scale(1);} 50% { transform:scale(1.15);} }
 
-    /* Profile */
-    .profile { text-align: center; padding: 40px 8% 20px; }
-    .profile img {
-      width: 100px; height: 100px;
-      border-radius: 50%; object-fit: cover;
-      border: 3px solid #006c59;
+    /* Main layout */
+    .container { padding: 28px 6%; max-width:1200px; margin:0 auto; }
+    .top-row { display:flex; gap:20px; align-items:center; justify-content:space-between; flex-wrap:wrap; margin-bottom:18px; }
+    .profile-card {
+      background:#fff; border-radius:14px; padding:12px 16px; box-shadow:0 8px 18px rgba(0,0,0,0.06);
+      display:flex; gap:12px; align-items:center;
     }
-    .profile h2 { color: #006c59; margin-top: 10px; }
-    .profile p { color: #555; }
+    .profile-avatar { width:56px; height:56px; border-radius:50%; background:#e6f6f0; display:flex; align-items:center; justify-content:center; font-weight:700; color:#006c59; font-size:22px; overflow:hidden; }
+    .profile-info { display:flex; flex-direction:column; }
+    .profile-info small { color:#666; font-size:12px; }
 
-    /* Dashboard Grid */
-    .dashboard {
-      padding: 30px 8%;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 25px;
-    }
+    /* Grid dashboard */
+    .grid { display:grid; grid-template-columns: 1fr 2fr; gap:18px; align-items:start; }
+    .col { background:#fff; border-radius:14px; padding:16px; box-shadow:0 8px 18px rgba(0,0,0,0.06); }
+    .col h2 { color:#006c59; margin-bottom:8px; font-size:18px; }
 
-    .card {
-      background: #fff;
-      border-radius: 20px;
-      padding: 25px;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
-      transition: transform 0.3s;
-      text-align: center;
-    }
-    .card:hover { transform: translateY(-6px); }
-    .card h3 { color: #006c59; margin-bottom: 8px; }
-    .card p { color: #555; font-size: 15px; }
-    .card i { font-size: 34px; color: #006c59; margin-bottom: 12px; }
+    /* quick stats tiles */
+    .tiles { display:flex; gap:12px; margin-top:8px; flex-wrap:wrap; }
+    .tile { flex:1; min-width:120px; background:#f8fffb; border-radius:10px; padding:12px; text-align:center; }
+    .tile strong { display:block; font-size:18px; margin-top:6px; }
 
-    .input-section {
-      margin-top: 12px;
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-    }
-    .input-section input {
-      width: 60%;
-      padding: 6px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-    .input-section button {
-      background: #006c59;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      padding: 6px 10px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    .input-section button:hover { background: #004c3e; }
+    /* charts area */
+    .charts { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px; }
+    .chart-box { height:260px; padding:10px; }
 
-    canvas { margin-top: 10px; height: 180px !important; }
-
-    footer {
-      background: #006c59;
-      color: #fff;
-      text-align: center;
-      padding: 18px;
-      margin-top: auto;
+    /* forms */
+    form.inline { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:10px; }
+    form.inline input[type="date"], form.inline input[type="number"], form.inline select, form.inline input[type="text"] {
+      padding:8px; border-radius:8px; border:1px solid #e2e8f0; min-width:120px;
     }
+    button.btn { background:#006c59; color:#fff; padding:8px 12px; border-radius:10px; border:none; cursor:pointer; font-weight:600; }
+    button.btn.secondary { background:#fff; color:#006c59; border:1px solid #006c59; }
+
+    /* section containers (fitness/nutrition/mental/profile pages within same file) */
+    .section { display:none; margin-top:14px; }
+    .section.active { display:block; }
+
+    /* footer */
+    footer { background:#006c59; color:#fff; text-align:center; padding:18px 8px; margin-top:26px; border-radius:10px; }
+
+    /* responsive */
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+      .charts { grid-template-columns: 1fr; }
+      nav ul { display:none; }
+      .menu-toggle { display:block; }
+    }
+    .menu-toggle { display:none; cursor:pointer; font-size:22px; color:#006c59; }
+
+    /* small UI tweaks */
+    .muted { color:#666; font-size:13px; }
+    table { width:100%; border-collapse:collapse; font-size:13px; }
+    table th, table td { padding:8px 6px; text-align:left; border-bottom:1px solid #f1f5f9; }
+    .controls { display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; align-items:center; }
+    .goal-progress { margin-top:8px; width:100%; height:10px; background:#eef9f6; border-radius:99px; overflow:hidden; }
+    .goal-fill { height:100%; background:linear-gradient(90deg,#00c6a7,#006c59); width:0%; }
   </style>
 </head>
 <body>
+
   <!-- Navbar -->
   <nav>
     <h1><i class="fa-solid fa-brain"></i> MindSync</h1>
-    <div class="menu-toggle"><i class="fa-solid fa-bars"></i></div>
-    <ul>
-      <li><a href="dashboard.html">Dashboard</a></li>
-      <li><a href="wellness.html">Wellness</a></li>
-      <li><a href="profile.html">Profile</a></li>
-      <li><a href="logout.html">Logout</a></li>
+
+    <div class="nav-right">
+      <div class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></div>
+     <ul>
+      <li><a href="dashboard.html"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+      <li><a href="wellness.html"><i class="fa-solid fa-chart-line"></i> Wellness</a></li>
+      <li><a href="fitness.html"><i class="fa-solid fa-dumbbell"></i> Fitness</a></li>
+      <li><a href="nutrition.html"><i class="fa-solid fa-utensils"></i> Nutrition</a></li>
+      <li><a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a></li>
+      <li><a href="logout.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
     </ul>
+    </div>
   </nav>
 
-  <!-- Profile -->
-  <section class="profile">
-    <img id="profilePic" src="images/default-avatar.png" alt="User" />
-    <h2 id="userName">Loading...</h2>
-    <p>Welcome back! Here’s your latest wellness progress 🌿</p>
-  </section>
-
-  <!-- Dashboard -->
-  <section class="dashboard">
-    <div class="card">
-      <i class="fa-solid fa-dumbbell"></i>
-      <h3>Fitness Tracker</h3>
-      <p>Minutes exercised this week</p>
-      <div class="input-section">
-        <input id="fitnessInput" type="number" placeholder="Add minutes" />
-        <button onclick="updateChart('fitness')">Add</button>
+  <div class="container">
+    <!-- Top Row: profile + quick actions -->
+    <div class="top-row">
+      <div class="profile-card">
+        <div class="profile-avatar" id="avatarEl">U</div>
+        <div class="profile-info">
+          <strong id="profileName">User</strong>
+          <small id="profileEmail" class="muted">local demo • data stored in browser</small>
+        </div>
+        <div style="margin-left:12px;">
+          <button class="btn" id="quickAddBtn">Quick Add</button>
+        </div>
       </div>
-      <canvas id="fitnessChart"></canvas>
+
+      <div class="profile-card" style="justify-content:flex-end; gap:14px;">
+        <div style="text-align:right;">
+          <div class="muted">Today's date</div>
+          <strong id="todayDate"></strong>
+        </div>
+      </div>
     </div>
 
-    <div class="card">
-      <i class="fa-solid fa-utensils"></i>
-      <h3>Nutrition Tracker</h3>
-      <p>Calories consumed per day</p>
-      <div class="input-section">
-        <input id="nutritionInput" type="number" placeholder="Add calories" />
-        <button onclick="updateChart('nutrition')">Add</button>
+    <!-- Grid: left summary / right charts -->
+    <div class="grid">
+      <!-- Left column: summary + inputs -->
+      <div class="col">
+        <h2>Overview</h2>
+        <div class="tiles">
+          <div class="tile">
+            <div class="muted">Avg Steps</div>
+            <strong id="statAvgSteps">0</strong>
+          </div>
+          <div class="tile">
+            <div class="muted">Avg Calories</div>
+            <strong id="statAvgCalories">0</strong>
+          </div>
+          <div class="tile">
+            <div class="muted">Avg Mood</div>
+            <strong id="statAvgMood">0</strong>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;">
+          <h3 style="color:#006c59; margin-bottom:8px;">Add Entry</h3>
+          <form id="addEntryForm" class="inline" onsubmit="return false;">
+            <select id="entryType">
+              <option value="fitness">Fitness (steps)</option>
+              <option value="nutrition">Nutrition (calories)</option>
+              <option value="mental">Mental (mood 1-5)</option>
+            </select>
+            <input type="date" id="entryDate" required />
+            <input type="number" id="entryValue" placeholder="Value" required />
+            <input type="text" id="entryNote" placeholder="Note (optional)" />
+            <button class="btn" id="entryAddBtn">Add</button>
+            <button class="btn secondary" id="entryReset">Reset</button>
+          </form>
+        </div>
+
+        <div style="margin-top:12px;">
+          <h3 style="color:#006c59; margin-bottom:8px;">Goals</h3>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <div>
+              <div class="muted">Daily Steps</div>
+              <input type="number" id="goalSteps" value="8000" style="padding:8px;border-radius:8px;border:1px solid #e2e8f0; min-width:100px;" />
+            </div>
+            <div>
+              <div class="muted">Daily Calories</div>
+              <input type="number" id="goalCalories" value="2000" style="padding:8px;border-radius:8px;border:1px solid #e2e8f0; min-width:100px;" />
+            </div>
+            <div>
+              <div class="muted">Target Mood (1-5)</div>
+              <input type="number" id="goalMood" value="4" min="1" max="5" style="padding:8px;border-radius:8px;border:1px solid #e2e8f0; width:80px;" />
+            </div>
+            <div>
+              <button class="btn" id="saveGoals">Save Goals</button>
+            </div>
+          </div>
+          <div style="margin-top:8px;">
+            <div class="muted">Steps progress (today)</div>
+            <div class="goal-progress"><div id="goalFillSteps" class="goal-fill"></div></div>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <h3 style="color:#006c59; margin-bottom:8px;">Recent Entries</h3>
+          <table>
+            <thead>
+              <tr><th>Date</th><th>Tracker</th><th>Value</th></tr>
+            </thead>
+            <tbody id="recentEntries">
+              <!-- auto filled -->
+            </tbody>
+          </table>
+        </div>
       </div>
-      <canvas id="nutritionChart"></canvas>
+
+      <!-- Right column: charts & sections -->
+      <div class="col">
+        <!-- Dashboard charts (default) -->
+        <div id="section-dashboard" class="section active">
+          <h2>Visualizations</h2>
+          <div class="charts">
+            <div class="chart-box col" style="padding:10px;">
+              <canvas id="stepsChart"></canvas>
+            </div>
+            <div class="chart-box col" style="padding:10px;">
+              <canvas id="caloriesChart"></canvas>
+            </div>
+            <div class="chart-box col" style="padding:10px;">
+              <canvas id="moodChart"></canvas>
+            </div>
+            <div class="chart-box col" style="padding:10px;">
+              <canvas id="nutritionPie"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fitness section -->
+        <div id="section-fitness" class="section">
+          <h2>Fitness Tracker</h2>
+          <p class="muted">Log steps and see trends. Set daily step goals and track completion.</p>
+          <div style="margin-top:10px;">
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+              <input type="date" id="fitDate" />
+              <input type="number" id="fitValue" placeholder="Steps" />
+              <input type="text" id="fitNote" placeholder="Note (optional)" />
+              <button class="btn" id="fitAdd">Add Steps</button>
+              <button class="btn secondary" id="fitClear">Clear Fitness Data</button>
+            </div>
+
+            <div style="margin-top:12px;">
+              <canvas id="fitnessOnlyChart" style="height:220px;"></canvas>
+            </div>
+
+            <div style="margin-top:12px;">
+              <strong>Total Steps:</strong> <span id="totalSteps">0</span> &nbsp;&nbsp; <strong>Avg Steps:</strong> <span id="avgSteps">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nutrition section -->
+        <div id="section-nutrition" class="section">
+          <h2>Nutrition Tracker</h2>
+          <p class="muted">Log calories and track nutrition balance.</p>
+          <div style="margin-top:10px;">
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+              <input type="date" id="nutDate" />
+              <input type="number" id="nutValue" placeholder="Calories" />
+              <select id="nutType">
+                <option value="breakfast">Breakfast</option>
+                <option value="lunch">Lunch</option>
+                <option value="dinner">Dinner</option>
+                <option value="snack">Snack</option>
+              </select>
+              <input type="text" id="nutNote" placeholder="Note" />
+              <button class="btn" id="nutAdd">Add Meal</button>
+              <button class="btn secondary" id="nutClear">Clear Nutrition Data</button>
+            </div>
+
+            <div style="margin-top:12px;">
+              <canvas id="nutritionOnlyChart" style="height:220px;"></canvas>
+            </div>
+
+            <div style="margin-top:12px;">
+              <strong>Total Calories:</strong> <span id="totalCalories">0</span> &nbsp;&nbsp; <strong>Avg Calories:</strong> <span id="avgCalories">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mental section -->
+        <div id="section-mental" class="section">
+          <h2>Mental Health Tracker</h2>
+          <p class="muted">Rate your mood (1 low — 5 high) and record notes.</p>
+          <div style="margin-top:10px;">
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+              <input type="date" id="menDate" />
+              <input type="number" id="menValue" placeholder="Mood 1-5" min="1" max="5" />
+              <input type="text" id="menNote" placeholder="Note" />
+              <button class="btn" id="menAdd">Add Mood</button>
+              <button class="btn secondary" id="menClear">Clear Mental Data</button>
+            </div>
+
+            <div style="margin-top:12px;">
+              <canvas id="mentalOnlyChart" style="height:220px;"></canvas>
+            </div>
+
+            <div style="margin-top:12px;">
+              <strong>Avg Mood:</strong> <span id="avgMood">0</span>
+            </div>
+
+            <div style="margin-top:12px;">
+              <h3 style="color:#006c59;">Recent Moods</h3>
+              <ul id="recentMoods" style="list-style:none; padding-left:0;"></ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile section -->
+        <div id="section-profile" class="section">
+          <h2>Profile</h2>
+          <p class="muted">Edit your name and avatar (URL). Data is stored locally for the demo.</p>
+          <div style="margin-top:12px; display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+            <div>
+              <div class="profile-avatar" id="profileAvatarPreview" style="width:90px;height:90px;font-size:28px;">U</div>
+            </div>
+            <div style="flex:1; min-width:220px;">
+              <label class="muted">Name</label>
+              <input type="text" id="profName" style="width:100%; padding:8px; border-radius:8px; border:1px solid #e2e8f0;" />
+              <label class="muted" style="margin-top:8px; display:block;">Avatar URL</label>
+              <input type="text" id="profAvatar" style="width:100%; padding:8px; border-radius:8px; border:1px solid #e2e8f0;" />
+              <div style="margin-top:8px;">
+                <button class="btn" id="saveProfile">Save Profile</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
 
-    <div class="card">
-      <i class="fa-solid fa-brain"></i>
-      <h3>Mental Health Tracker</h3>
-      <p>Daily mood ratings (1–10)</p>
-      <div class="input-section">
-        <input id="mentalInput" type="number" placeholder="Rate mood" min="1" max="10" />
-        <button onclick="updateChart('mental')">Add</button>
-      </div>
-      <canvas id="mentalChart"></canvas>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2025 MindSync | Empowering Wellness Through Synergy 🌿</p>
-  </footer>
+    <footer>
+      <p>&copy; 2025 MindSync • Wellness Synergy — Dashboard prototype • Data stored locally (demo)</p>
+    </footer>
+  </div>
 
   <script>
-    const menuToggle = document.querySelector('.menu-toggle');
-    const navLinks = document.querySelector('nav ul');
-    menuToggle.addEventListener('click', () => navLinks.classList.toggle('show'));
+    /*************************************************************************
+     * Wellness Synergy - Client-side dashboard prototype
+     * - Chart.js charts
+     * - localStorage persistence
+     * - Sections: dashboard, fitness, nutrition, mental, profile
+     *
+     * Note: Switch to API endpoints (fetch) when backend is ready. Keys:
+     * localStorage key: 'wellness_synergy_v1'
+     *************************************************************************/
 
-    let fitnessData = [30, 45, 50, 60, 40];
-    let nutritionData = [2000, 1800, 2200, 2100, 1900];
-    let mentalData = [7, 8, 6, 9, 8];
+    // --- Utility helpers ---
+    const qs = (s) => document.querySelector(s);
+    const qsa = (s) => document.querySelectorAll(s);
+    const TODAY = new Date().toISOString().slice(0,10);
 
-    const token = localStorage.getItem("token");
-    const baseURL = "https://mindsync-backend.onrender.com/api/dashboard";
+    // initial state shape
+    const initialState = {
+      profile: { name: 'User', avatar: '' },
+      goals: { steps: 8000, calories: 2000, mood: 4 },
+      fitness: [],     // {date, value, note}
+      nutrition: [],   // {date, value, type, note}
+      mental: []       // {date, value, note}
+    };
 
-    // Charts
-    let fitnessChart, nutritionChart, mentalChart;
-
-    async function loadDashboard() {
+    // Load / Save
+    function loadState() {
       try {
-        const res = await fetch(baseURL, {
-          headers: { "Authorization": `Bearer ${token}` },
-        });
-        const result = await res.json();
+        const raw = localStorage.getItem('wellness_synergy_v1');
+        if (!raw) return JSON.parse(JSON.stringify(initialState));
+        return JSON.parse(raw);
+      } catch (e) {
+        console.error('load error', e);
+        return JSON.parse(JSON.stringify(initialState));
+      }
+    }
+    function saveState() {
+      localStorage.setItem('wellness_synergy_v1', JSON.stringify(state));
+    }
 
-        if (result.success) {
-          const { name, profilePic, fitness, nutrition, mentalHealth } = result.data;
-          document.getElementById("userName").textContent = name;
-          document.getElementById("profilePic").src = profilePic;
-          fitnessData = fitness;
-          nutritionData = nutrition;
-          mentalData = mentalHealth;
-        }
+    // State
+    let state = loadState();
 
-        initCharts();
-      } catch (err) {
-        console.error("Error fetching data:", err);
-        initCharts();
+    // DOM initial values
+    qs('#todayDate').textContent = new Date().toLocaleDateString();
+    qs('#entryDate').value = TODAY;
+    qs('#fitDate').value = TODAY;
+    qs('#nutDate').value = TODAY;
+    qs('#menDate').value = TODAY;
+
+    // Charts placeholders
+    let charts = {};
+
+    // Initialize charts
+    function initCharts() {
+      // Steps chart (line)
+      const stepsCtx = qs('#stepsChart').getContext('2d');
+      charts.stepsChart = new Chart(stepsCtx, {
+        type: 'line',
+        data: { labels: [], datasets: [{ label:'Steps', data: [], fill:true, tension:0.3 }] },
+        options: { responsive:true, maintainAspectRatio:false, plugins:{title:{display:true,text:'Steps over time'}} }
+      });
+
+      // Calories chart (line)
+      const calCtx = qs('#caloriesChart').getContext('2d');
+      charts.caloriesChart = new Chart(calCtx, {
+        type: 'line',
+        data: { labels: [], datasets: [{ label:'Calories', data: [], tension:0.3 }] },
+        options: { responsive:true, maintainAspectRatio:false, plugins:{title:{display:true,text:'Calories over time'}} }
+      });
+
+      // Mood chart (bar)
+      const moodCtx = qs('#moodChart').getContext('2d');
+      charts.moodChart = new Chart(moodCtx, {
+        type: 'bar',
+        data: { labels: [], datasets: [{ label:'Mood (1-5)', data: [] }] },
+        options: { responsive:true, maintainAspectRatio:false, plugins:{title:{display:true,text:'Mood over time'}}, scales:{y:{min:0,max:5}} }
+      });
+
+      // Nutrition pie (static sample breakdown - can adapt to real macros)
+      const pieCtx = qs('#nutritionPie').getContext('2d');
+      charts.nutritionPie = new Chart(pieCtx, {
+        type: 'pie',
+        data: { labels:['Protein','Carbs','Fats','Other'], datasets:[{ data:[30,50,15,5] }] },
+        options: { responsive:true, maintainAspectRatio:false, plugins:{title:{display:true,text:'Nutrition mix (sample)'}} }
+      });
+
+      // Single charts for sections
+      charts.fitnessOnly = new Chart(qs('#fitnessOnlyChart').getContext('2d'), {
+        type:'line', data:{labels:[], datasets:[{label:'Steps', data:[], fill:true, tension:0.3}]},
+        options:{responsive:true, maintainAspectRatio:false}
+      });
+      charts.nutritionOnly = new Chart(qs('#nutritionOnlyChart').getContext('2d'), {
+        type:'line', data:{labels:[], datasets:[{label:'Calories', data:[], tension:0.3}]},
+        options:{responsive:true, maintainAspectRatio:false}
+      });
+      charts.mentalOnly = new Chart(qs('#mentalOnlyChart').getContext('2d'), {
+        type:'bar', data:{labels:[], datasets:[{label:'Mood', data:[]}]},
+        options:{responsive:true, maintainAspectRatio:false, scales:{y:{min:0,max:5}}}
+      });
+    }
+
+    // Helper to build timeseries labels and values (sorted by date)
+    function seriesFromArray(arr) {
+      const sorted = [...arr].sort((a,b)=>a.date.localeCompare(b.date));
+      return { labels: sorted.map(r=>r.date), values: sorted.map(r=>r.value) };
+    }
+
+    // Render functions
+    function renderProfile() {
+      qs('#profileName').textContent = state.profile.name || 'User';
+      qs('#profName').value = state.profile.name || '';
+      qs('#profAvatar').value = state.profile.avatar || '';
+      const avatarEl = qs('#avatarEl'), preview = qs('#profileAvatarPreview');
+      if (state.profile.avatar) {
+        avatarEl.innerHTML = `<img src="${state.profile.avatar}" alt="avatar" style="width:100%;height:100%;object-fit:cover">`;
+        preview.innerHTML = `<img src="${state.profile.avatar}" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+      } else {
+        const initial = (state.profile.name || 'U').charAt(0).toUpperCase();
+        avatarEl.textContent = initial;
+        preview.textContent = initial;
       }
     }
 
-    function initCharts() {
-      const labels = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+    function renderStats() {
+      const avg = (arr) => arr.length ? (arr.reduce((s,r)=>s+r.value,0)/arr.length).toFixed(1) : 0;
+      const total = (arr) => arr.reduce((s,r)=>s+r.value,0);
+      qs('#statAvgSteps').textContent = avg(state.fitness);
+      qs('#statAvgCalories').textContent = avg(state.nutrition);
+      qs('#statAvgMood').textContent = avg(state.mental);
 
-      fitnessChart = new Chart(document.getElementById("fitnessChart"), {
-        type: "line",
-        data: { labels, datasets: [{ label: "Minutes", data: fitnessData, borderColor: "#006c59", fill: false }] },
-        options: { responsive: true }
-      });
+      qs('#totalSteps').textContent = total(state.fitness);
+      qs('#avgSteps').textContent = avg(state.fitness);
+      qs('#totalCalories').textContent = total(state.nutrition);
+      qs('#avgCalories').textContent = avg(state.nutrition);
+      qs('#avgMood').textContent = avg(state.mental);
 
-      nutritionChart = new Chart(document.getElementById("nutritionChart"), {
-        type: "bar",
-        data: { labels, datasets: [{ label: "Calories", data: nutritionData, backgroundColor: "#74ebd5" }] },
-        options: { responsive: true }
-      });
+      // recent entries table
+      const recent = [...state.fitness.map(f=>({date:f.date, tracker:'Fitness', value:f.value})),
+                      ...state.nutrition.map(n=>({date:n.date, tracker:'Nutrition', value:n.value})),
+                      ...state.mental.map(m=>({date:m.date, tracker:'Mental', value:m.value}))];
+      recent.sort((a,b)=>b.date.localeCompare(a.date));
+      const rows = recent.slice(0,8).map(r=>`<tr><td>${r.date}</td><td>${r.tracker}</td><td>${r.value}</td></tr>`).join('') || '<tr><td colspan="3" class="muted">No entries yet</td></tr>';
+      qs('#recentEntries').innerHTML = rows;
 
-      mentalChart = new Chart(document.getElementById("mentalChart"), {
-        type: "pie",
-        data: { labels, datasets: [{ data: mentalData, backgroundColor: ["#dff6f0","#b9e5e8","#a7c7e7","#80d0c7","#74ebd5"] }] },
-        options: { responsive: true }
-      });
+      // recent moods list
+      const moodsList = state.mental.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,6)
+        .map(m=>`<li style="padding:8px 6px;border-radius:8px;background:#f6fffb;margin-bottom:6px;">${m.date} — Mood: <strong>${m.value}</strong> ${m.note ? ' — '+m.note : ''}</li>`).join('');
+      qs('#recentMoods').innerHTML = moodsList || '<li class="muted">No mood entries yet</li>';
+
+      // progress to step goal (today)
+      const todaySteps = state.fitness.filter(f=>f.date === TODAY).reduce((s,r)=>s+r.value,0);
+      const pct = Math.min(100, Math.round((todaySteps / (state.goals.steps || 1))*100));
+      qs('#goalFillSteps').style.width = pct + '%';
     }
 
-    function updateChart(type) {
-      const input = document.getElementById(`${type}Input`);
-      const value = parseInt(input.value);
-      if (!value) return alert("Please enter a valid number");
+    function renderCharts() {
+      // build series and update chart data, then update
+      const sFitness = seriesFromArray(state.fitness);
+      charts.stepsChart.data.labels = sFitness.labels;
+      charts.stepsChart.data.datasets[0].data = sFitness.values;
+      charts.stepsChart.update();
 
-      let chart, dataArray;
-      if (type === 'fitness') { chart = fitnessChart; dataArray = fitnessData; }
-      if (type === 'nutrition') { chart = nutritionChart; dataArray = nutritionData; }
-      if (type === 'mental') { chart = mentalChart; dataArray = mentalData; }
+      const sNutrition = seriesFromArray(state.nutrition);
+      charts.caloriesChart.data.labels = sNutrition.labels;
+      charts.caloriesChart.data.datasets[0].data = sNutrition.values;
+      charts.caloriesChart.update();
 
-      dataArray.push(value);
-      if (dataArray.length > 7) dataArray.shift();
-      chart.data.datasets[0].data = dataArray;
-      chart.update();
-      input.value = "";
-      localStorage.setItem(type + "Data", JSON.stringify(dataArray));
+      const sMental = seriesFromArray(state.mental);
+      charts.moodChart.data.labels = sMental.labels;
+      charts.moodChart.data.datasets[0].data = sMental.values;
+      charts.moodChart.update();
+
+      // section-only charts
+      charts.fitnessOnly.data.labels = sFitness.labels;
+      charts.fitnessOnly.data.datasets[0].data = sFitness.values;
+      charts.fitnessOnly.update();
+
+      charts.nutritionOnly.data.labels = sNutrition.labels;
+      charts.nutritionOnly.data.datasets[0].data = sNutrition.values;
+      charts.nutritionOnly.update();
+
+      charts.mentalOnly.data.labels = sMental.labels;
+      charts.mentalOnly.data.datasets[0].data = sMental.values;
+      charts.mentalOnly.update();
     }
 
-    window.onload = loadDashboard;
+    // initial render
+    initCharts();
+    renderProfile();
+    renderStats();
+    renderCharts();
+
+    // --- Actions: adding entries ---
+    function addEntry(type, payload) {
+      // payload: {date, value, note, type?}
+      if (!payload.date || payload.value === '' || payload.value === null || isNaN(payload.value)) {
+        alert('Please provide date and numeric value.');
+        return;
+      }
+      if (type === 'fitness') state.fitness.push({ date: payload.date, value: Number(payload.value), note: payload.note || '' });
+      if (type === 'nutrition') state.nutrition.push({ date: payload.date, value: Number(payload.value), type: payload.type || 'meal', note: payload.note || '' });
+      if (type === 'mental') state.mental.push({ date: payload.date, value: Number(payload.value), note: payload.note || '' });
+
+      saveState();
+      renderStats();
+      renderCharts();
+    }
+
+    // wired UI events
+    qs('#entryAddBtn').addEventListener('click', ()=>{
+      const type = qs('#entryType').value, date = qs('#entryDate').value, value = qs('#entryValue').value, note = qs('#entryNote').value;
+      addEntry(type, { date, value, note });
+      qs('#entryValue').value = ''; qs('#entryNote').value = '';
+    });
+    qs('#entryReset').addEventListener('click', ()=>{ qs('#entryDate').value = TODAY; qs('#entryValue').value=''; qs('#entryNote').value=''; });
+
+    // section-specific quick adds
+    qs('#fitAdd').addEventListener('click', ()=> {
+      addEntry('fitness', { date: qs('#fitDate').value || TODAY, value: qs('#fitValue').value, note: qs('#fitNote').value });
+      qs('#fitValue').value=''; qs('#fitNote').value='';
+    });
+    qs('#nutAdd').addEventListener('click', ()=> {
+      addEntry('nutrition', { date: qs('#nutDate').value || TODAY, value: qs('#nutValue').value, type: qs('#nutType').value, note: qs('#nutNote').value });
+      qs('#nutValue').value=''; qs('#nutNote').value='';
+    });
+    qs('#menAdd').addEventListener('click', ()=> {
+      addEntry('mental', { date: qs('#menDate').value || TODAY, value: qs('#menValue').value, note: qs('#menNote').value });
+      qs('#menValue').value=''; qs('#menNote').value='';
+    });
+
+    // clear data buttons (confirm)
+    qs('#fitClear').addEventListener('click', ()=> { if(confirm('Clear all fitness data?')) { state.fitness=[]; saveState(); renderStats(); renderCharts(); }});
+    qs('#nutClear').addEventListener('click', ()=> { if(confirm('Clear all nutrition data?')) { state.nutrition=[]; saveState(); renderStats(); renderCharts(); }});
+    qs('#menClear').addEventListener('click', ()=> { if(confirm('Clear all mental data?')) { state.mental=[]; saveState(); renderStats(); renderCharts(); }});
+
+    // Goals save
+    qs('#saveGoals').addEventListener('click', ()=> {
+      const steps = Number(qs('#goalSteps').value) || 0;
+      const calories = Number(qs('#goalCalories').value) || 0;
+      const mood = Number(qs('#goalMood').value) || 0;
+      state.goals = { steps, calories, mood };
+      saveState();
+      renderStats();
+      alert('Goals saved locally.');
+    });
+
+    // Profile save
+    qs('#saveProfile').addEventListener('click', ()=> {
+      const name = qs('#profName').value.trim() || 'User';
+      const avatar = qs('#profAvatar').value.trim();
+      state.profile = { name, avatar };
+      saveState();
+      renderProfile();
+      alert('Profile saved locally.');
+    });
+
+    // Quick add button opens the add entry type selection on dashboard (focus)
+    qs('#quickAddBtn').addEventListener('click', ()=> { window.scrollTo({ top: 300, behavior:'smooth' }); qs('#entryType').focus(); });
+
+    // Navigation: show/hide sections
+    function showSection(key) {
+      qsa('.section').forEach(s=>s.classList.remove('active'));
+      const el = qs('#section-' + key);
+      if (el) el.classList.add('active');
+      // highlight nav
+      qsa('.nav-link').forEach(a=>a.classList.remove('active'));
+      const link = Array.from(qsa('.nav-link')).find(a=>a.dataset.section===key);
+      if (link) link.classList.add('active');
+    }
+    qsa('.nav-link').forEach(a=>a.addEventListener('click',(ev)=>{
+      ev.preventDefault();
+      const key = a.dataset.section || 'dashboard';
+      showSection(key);
+      // if switching to dashboard, update charts & stats (always kept current)
+      if (key === 'dashboard') { renderCharts(); renderStats(); }
+    }));
+
+    // Mobile toggle nav
+    qs('#menuToggle').addEventListener('click', ()=>{
+      const nav = qs('#mainNav');
+      nav.style.display = (nav.style.display === 'flex')? 'none' : 'flex';
+    });
+
+    // initial DOM fill for profile & goals inputs
+    qs('#goalSteps').value = state.goals.steps || 8000;
+    qs('#goalCalories').value = state.goals.calories || 2000;
+    qs('#goalMood').value = state.goals.mood || 4;
+    qs('#profName').value = state.profile.name || '';
+    qs('#profAvatar').value = state.profile.avatar || '';
+
+    // re-render after page loaded
+    renderProfile();
+    renderStats();
+    renderCharts();
+
+    // If you need to prefill example demo data (uncomment to test)
+    // if (state.fitness.length === 0 && state.nutrition.length === 0 && state.mental.length === 0) {
+    //   // small demo dataset
+    //   state.fitness.push({date:'2025-10-27', value: 5000});
+    //   state.fitness.push({date:'2025-10-28', value: 8300});
+    //   state.fitness.push({date:'2025-10-29', value: 9200});
+    //   state.nutrition.push({date:'2025-10-27', value: 2100, type:'lunch'});
+    //   state.nutrition.push({date:'2025-10-28', value: 1900, type:'dinner'});
+    //   state.mental.push({date:'2025-10-27', value: 4});
+    //   state.mental.push({date:'2025-10-28', value: 3});
+    //   saveState(); renderStats(); renderCharts();
+    // }
+
+    // Expose a function to export CSV for basic demo (optional)
+    function exportCSV() {
+      const rows = [['type','date','value','note']];
+      state.fitness.forEach(r=>rows.push(['fitness',r.date,r.value,r.note||'']));
+      state.nutrition.forEach(r=>rows.push(['nutrition',r.date,r.value,r.note||'']));
+      state.mental.forEach(r=>rows.push(['mental',r.date,r.value,r.note||'']));
+      const csv = rows.map(r=>r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'wellness-data.csv'; a.click();
+      URL.revokeObjectURL(url);
+    }
+    // For debugging in console: window.exportCSV = exportCSV;
+
   </script>
 </body>
 </html>
