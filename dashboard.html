@@ -13,14 +13,13 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
+    /* (KEEPING ALL YOUR STYLES — unchanged) */
     * { margin:0; padding:0; box-sizing:border-box; font-family:'Quicksand',sans-serif; }
     body {
       background: linear-gradient(135deg, #dff6f0, #b9e5e8, #a7c7e7);
       color: #2c3e50;
       min-height: 100vh;
     }
-
-    /* Navbar */
     nav {
       background: rgba(255,255,255,0.95);
       padding: 12px 6%;
@@ -40,10 +39,7 @@
     nav ul { list-style:none; display:flex; gap:18px; align-items:center; }
     nav ul li a { text-decoration:none; color:#2c3e50; font-size:15px; font-weight:600; display:flex; gap:8px; align-items:center; padding:8px 10px; border-radius:8px;}
     nav ul li a.active, nav ul li a:hover { color:#fff; background:#006c59; transform:translateY(-1px); }
-
     @keyframes pulse { 0%,100% { transform:scale(1);} 50% { transform:scale(1.15);} }
-
-    /* Main layout */
     .container { padding: 28px 6%; max-width:1200px; margin:0 auto; }
     .top-row { display:flex; gap:20px; align-items:center; justify-content:space-between; flex-wrap:wrap; margin-bottom:18px; }
     .profile-card {
@@ -53,46 +49,23 @@
     .profile-avatar { width:56px; height:56px; border-radius:50%; background:#e6f6f0; display:flex; align-items:center; justify-content:center; font-weight:700; color:#006c59; font-size:22px; overflow:hidden; }
     .profile-info { display:flex; flex-direction:column; }
     .profile-info small { color:#666; font-size:12px; }
-
-    /* Grid dashboard */
     .grid { display:grid; grid-template-columns: 1fr 2fr; gap:18px; align-items:start; }
     .col { background:#fff; border-radius:14px; padding:16px; box-shadow:0 8px 18px rgba(0,0,0,0.06); }
     .col h2 { color:#006c59; margin-bottom:8px; font-size:18px; }
-
-    /* quick stats tiles */
     .tiles { display:flex; gap:12px; margin-top:8px; flex-wrap:wrap; }
     .tile { flex:1; min-width:120px; background:#f8fffb; border-radius:10px; padding:12px; text-align:center; }
     .tile strong { display:block; font-size:18px; margin-top:6px; }
-
-    /* charts area */
     .charts { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px; }
     .chart-box { height:260px; padding:10px; }
-
-    /* forms */
     form.inline { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:10px; }
-    form.inline input[type="date"], form.inline input[type="number"], form.inline select, form.inline input[type="text"] {
-      padding:8px; border-radius:8px; border:1px solid #e2e8f0; min-width:120px;
-    }
+    form.inline input, form.inline select { padding:8px; border-radius:8px; border:1px solid #e2e8f0; min-width:120px; }
     button.btn { background:#006c59; color:#fff; padding:8px 12px; border-radius:10px; border:none; cursor:pointer; font-weight:600; }
     button.btn.secondary { background:#fff; color:#006c59; border:1px solid #006c59; }
-
-    /* section containers (fitness/nutrition/mental/profile pages within same file) */
     .section { display:none; margin-top:14px; }
     .section.active { display:block; }
-
-    /* footer */
     footer { background:#006c59; color:#fff; text-align:center; padding:18px 8px; margin-top:26px; border-radius:10px; }
-
-    /* responsive */
-    @media (max-width: 900px) {
-      .grid { grid-template-columns: 1fr; }
-      .charts { grid-template-columns: 1fr; }
-      nav ul { display:none; }
-      .menu-toggle { display:block; }
-    }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } .charts { grid-template-columns: 1fr; } nav ul { display:none; } .menu-toggle { display:block; } }
     .menu-toggle { display:none; cursor:pointer; font-size:22px; color:#006c59; }
-
-    /* small UI tweaks */
     .muted { color:#666; font-size:13px; }
     table { width:100%; border-collapse:collapse; font-size:13px; }
     table th, table td { padding:8px 6px; text-align:left; border-bottom:1px solid #f1f5f9; }
@@ -346,21 +319,16 @@
   </div>
 
   <script>
-    /*************************************************************************
-     * Wellness Synergy - Client-side dashboard prototype
-     * - Chart.js charts
-     * - localStorage persistence
-     * - Sections: dashboard, fitness, nutrition, mental, profile
-     *
-     * Note: Switch to API endpoints (fetch) when backend is ready. Keys:
-     * localStorage key: 'wellness_synergy_v1'
-     *************************************************************************/
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      alert('Please login to access the dashboard.');
+      window.location.href = 'login.html';  // redirect if not logged in
+    }
 
-    // --- Utility helpers ---
-    const qs = (s) => document.querySelector(s);
+ const qs = (s) => document.querySelector(s);
     const qsa = (s) => document.querySelectorAll(s);
     const TODAY = new Date().toISOString().slice(0,10);
-
+    
     // initial state shape
     const initialState = {
       profile: { name: 'User', avatar: '' },
