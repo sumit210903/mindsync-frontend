@@ -1,11 +1,27 @@
 // frontend/api.js
-const BASE_URL = "https://mindsync-backend.onrender.com"; // update if local: http://localhost:5000
 
-// Get dashboard data
+// ✅ Backend base URL (Render backend)
+const BASE_URL = "https://mindsync-backend.onrender.com";
+
+// ✅ Get user dashboard data
 export async function fetchDashboardData(token) {
-  const res = await fetch(`${BASE_URL}/api/dashboard`, {
-    method: "GET",
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return res.json();
+  try {
+    const res = await fetch(`${BASE_URL}/api/dashboard`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`Server Error: ${res.status}`);
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error("❌ Dashboard API error:", err);
+    return { success: false, message: err.message };
+  }
 }
