@@ -319,237 +319,310 @@
   </div>
 
  <script>
-  // 🔒 Check Login Token First
-  const token = localStorage.getItem('authToken');
-  if (!token) {
-    alert('Please login to access the dashboard.');
-    window.location.href = 'login.html';  // redirect if not logged in
+// ========================================================
+// 🔐 AUTH CHECK
+// ========================================================
+const token = localStorage.getItem("authToken");
+
+if (!token) {
+  alert("Please login to access the dashboard.");
+  window.location.href = "login.html";
+}
+
+// Helper selectors
+const qs = (s) => document.querySelector(s);
+const qsa = (s) => document.querySelectorAll(s);
+const TODAY = new Date().toISOString().slice(0, 10);
+
+// ========================================================
+// 🔧 STATE MANAGEMENT
+// ========================================================
+const initialState = {
+  profile: { name: "User", avatar: "" },
+  goals: { steps: 8000, calories: 2000, mood: 4 },
+  fitness: [],
+  nutrition: [],
+  mental: [],
+};
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem("wellness_synergy_v1");
+    return raw ? JSON.parse(raw) : structuredClone(initialState);
+  } catch (e) {
+    console.error("load error", e);
+    return structuredClone(initialState);
   }
+}
 
-  // --- Short helpers ---
-  const qs = (s) => document.querySelector(s);
-  const qsa = (s) => document.querySelectorAll(s);
-  const TODAY = new Date().toISOString().slice(0, 10);
+function saveState() {
+  localStorage.setItem("wellness_synergy_v1", JSON.stringify(state));
+}
 
-  // --- Initial App State ---
-  const initialState = {
-    profile: { name: 'User', avatar: '' },
-    goals: { steps: 8000, calories: 2000, mood: 4 },
-    fitness: [],
-    nutrition: [],
-    mental: [],
-  };
+let state = loadState();
 
-  // --- Load / Save State ---
-  function loadState() {
-    try {
-      const raw = localStorage.getItem('wellness_synergy_v1');
-      return raw ? JSON.parse(raw) : JSON.parse(JSON.stringify(initialState));
-    } catch (e) {
-      console.error('load error', e);
-      return JSON.parse(JSON.stringify(initialState));
-    }
-  }
-  function saveState() {
-    localStorage.setItem('wellness_synergy_v1', JSON.stringify(state));
-  }
-
-  let state = loadState();
-
-  // --- Initialize DOM ---
-  qs('#todayDate').textContent = new Date().toLocaleDateString();
-  ['#entryDate', '#fitDate', '#nutDate', '#menDate'].forEach(id => qs(id).value = TODAY);
-
-  // --- Charts Setup ---
-  let charts = {};
-
-  function initCharts() {
-    charts.stepsChart = new Chart(qs('#stepsChart'), {
-      type: 'line',
-      data: { labels: [], datasets: [{ label: 'Steps', data: [], fill: true, tension: 0.3 }] },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Steps over time' } } }
+// ========================================================
+// 🧠 FETCH USER PROFILE FROM BACKEND
+// ========================================================
+async function fetchUserProfile() {
+  try {
+    const res = await fetch("https://mindsync-backend.onrender.com/api/users/verify", {
+      headers: { Authorization: `Bearer ${token}` },
     });
 
-    charts.caloriesChart = new Chart(qs('#caloriesChart'), {
-      type: 'line',
-      data: { labels: [], datasets: [{ label: 'Calories', data: [], tension: 0.3 }] },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Calories over time' } } }
-    });
-
-    charts.moodChart = new Chart(qs('#moodChart'), {
-      type: 'bar',
-      data: { labels: [], datasets: [{ label: 'Mood (1–5)', data: [] }] },
-      options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 5 } } }
-    });
-
-    charts.nutritionPie = new Chart(qs('#nutritionPie'), {
-      type: 'pie',
-      data: { labels: ['Protein', 'Carbs', 'Fats', 'Other'], datasets: [{ data: [30, 50, 15, 5] }] },
-      options: { responsive: true, maintainAspectRatio: false }
-    });
-
-    charts.fitnessOnly = new Chart(qs('#fitnessOnlyChart'), {
-      type: 'line', data: { labels: [], datasets: [{ label: 'Steps', data: [] }] },
-      options: { responsive: true, maintainAspectRatio: false }
-    });
-
-    charts.nutritionOnly = new Chart(qs('#nutritionOnlyChart'), {
-      type: 'line', data: { labels: [], datasets: [{ label: 'Calories', data: [] }] },
-      options: { responsive: true, maintainAspectRatio: false }
-    });
-
-    charts.mentalOnly = new Chart(qs('#mentalOnlyChart'), {
-      type: 'bar', data: { labels: [], datasets: [{ label: 'Mood', data: [] }] },
-      options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 5 } } }
-    });
-  }
-
-  // --- Utility ---
-  const seriesFromArray = (arr) => {
-    const sorted = [...arr].sort((a, b) => a.date.localeCompare(b.date));
-    return { labels: sorted.map(r => r.date), values: sorted.map(r => r.value) };
-  };
-
-  // --- Render Profile ---
-  function renderProfile() {
-    const name = state.profile.name || 'User';
-    qs('#profileName').textContent = name;
-    qs('#profName').value = name;
-    qs('#profAvatar').value = state.profile.avatar || '';
-
-    const avatarEl = qs('#avatarEl');
-    const preview = qs('#profileAvatarPreview');
-    if (state.profile.avatar) {
-      avatarEl.innerHTML = `<img src="${state.profile.avatar}" style="width:100%;height:100%;border-radius:50%;">`;
-      preview.innerHTML = avatarEl.innerHTML;
+    const data = await res.json();
+    if (res.ok && data?.user) {
+      state.profile.name = data.user.name || "User";
+      state.profile.avatar = data.user.avatar || "";
+      saveState();
     } else {
-      const initial = name.charAt(0).toUpperCase();
-      avatarEl.textContent = preview.textContent = initial;
+      console.warn("Token invalid, redirecting to login.");
+      localStorage.removeItem("authToken");
+      window.location.href = "login.html";
     }
+  } catch (err) {
+    console.error("Error verifying token:", err);
+    alert("Session expired. Please login again.");
+    localStorage.removeItem("authToken");
+    window.location.href = "login.html";
   }
+}
 
-  // --- Render Stats & Charts ---
-  function renderStats() {
-    const avg = (arr) => arr.length ? (arr.reduce((s, r) => s + r.value, 0) / arr.length).toFixed(1) : 0;
-    const total = (arr) => arr.reduce((s, r) => s + r.value, 0);
+// ========================================================
+// 📅 INITIALIZE DATE + DOM
+// ========================================================
+qs("#todayDate").textContent = new Date().toLocaleDateString();
+["#entryDate", "#fitDate", "#nutDate", "#menDate"].forEach(
+  (id) => (qs(id).value = TODAY)
+);
 
-    qs('#statAvgSteps').textContent = avg(state.fitness);
-    qs('#statAvgCalories').textContent = avg(state.nutrition);
-    qs('#statAvgMood').textContent = avg(state.mental);
+// ========================================================
+// 📊 CHARTS INITIALIZATION
+// ========================================================
+let charts = {};
 
-    qs('#totalSteps').textContent = total(state.fitness);
-    qs('#avgSteps').textContent = avg(state.fitness);
-    qs('#totalCalories').textContent = total(state.nutrition);
-    qs('#avgCalories').textContent = avg(state.nutrition);
-    qs('#avgMood').textContent = avg(state.mental);
+function initCharts() {
+  const chartCfg = (label, type = "line", opts = {}) => ({
+    type,
+    data: { labels: [], datasets: [{ label, data: [], fill: true, tension: 0.3 }] },
+    options: { responsive: true, maintainAspectRatio: false, ...opts },
+  });
 
-    const todaySteps = state.fitness.filter(f => f.date === TODAY).reduce((s, r) => s + r.value, 0);
-    const pct = Math.min(100, Math.round((todaySteps / (state.goals.steps || 1)) * 100));
-    qs('#goalFillSteps').style.width = pct + '%';
+  charts.stepsChart = new Chart(qs("#stepsChart"), chartCfg("Steps", "line"));
+  charts.caloriesChart = new Chart(qs("#caloriesChart"), chartCfg("Calories", "line"));
+  charts.moodChart = new Chart(qs("#moodChart"), chartCfg("Mood (1–5)", "bar", { scales: { y: { min: 0, max: 5 } } }));
+  charts.nutritionPie = new Chart(qs("#nutritionPie"), {
+    type: "pie",
+    data: {
+      labels: ["Protein", "Carbs", "Fats", "Other"],
+      datasets: [{ data: [30, 50, 15, 5] }],
+    },
+  });
+  charts.fitnessOnly = new Chart(qs("#fitnessOnlyChart"), chartCfg("Steps", "line"));
+  charts.nutritionOnly = new Chart(qs("#nutritionOnlyChart"), chartCfg("Calories", "line"));
+  charts.mentalOnly = new Chart(qs("#mentalOnlyChart"), chartCfg("Mood", "bar", { scales: { y: { min: 0, max: 5 } } }));
+}
+
+// ========================================================
+// 🧩 HELPERS
+// ========================================================
+function seriesFromArray(arr) {
+  const sorted = [...arr].sort((a, b) => a.date.localeCompare(b.date));
+  return {
+    labels: sorted.map((r) => r.date),
+    values: sorted.map((r) => r.value),
+  };
+}
+
+// ========================================================
+// 👤 PROFILE RENDER
+// ========================================================
+function renderProfile() {
+  const { name, avatar } = state.profile;
+  qs("#profileName").textContent = name || "User";
+  qs("#profName").value = name || "User";
+  qs("#profAvatar").value = avatar || "";
+
+  const avatarEl = qs("#avatarEl");
+  const preview = qs("#profileAvatarPreview");
+
+  if (avatar) {
+    avatarEl.innerHTML = `<img src="${avatar}" style="width:100%;height:100%;border-radius:50%;">`;
+    preview.innerHTML = avatarEl.innerHTML;
+  } else {
+    const initial = (name?.charAt(0) || "U").toUpperCase();
+    avatarEl.textContent = preview.textContent = initial;
   }
+}
 
-  function renderCharts() {
-    const sFit = seriesFromArray(state.fitness);
-    const sNut = seriesFromArray(state.nutrition);
-    const sMen = seriesFromArray(state.mental);
+// ========================================================
+// 📈 STATS + CHART RENDER
+// ========================================================
+function renderStats() {
+  const avg = (arr) =>
+    arr.length ? (arr.reduce((s, r) => s + r.value, 0) / arr.length).toFixed(1) : 0;
+  const total = (arr) => arr.reduce((s, r) => s + r.value, 0);
 
-    charts.stepsChart.data.labels = sFit.labels;
-    charts.stepsChart.data.datasets[0].data = sFit.values;
-    charts.stepsChart.update();
+  qs("#statAvgSteps").textContent = avg(state.fitness);
+  qs("#statAvgCalories").textContent = avg(state.nutrition);
+  qs("#statAvgMood").textContent = avg(state.mental);
 
-    charts.caloriesChart.data.labels = sNut.labels;
-    charts.caloriesChart.data.datasets[0].data = sNut.values;
-    charts.caloriesChart.update();
+  qs("#totalSteps").textContent = total(state.fitness);
+  qs("#avgSteps").textContent = avg(state.fitness);
+  qs("#totalCalories").textContent = total(state.nutrition);
+  qs("#avgCalories").textContent = avg(state.nutrition);
+  qs("#avgMood").textContent = avg(state.mental);
 
-    charts.moodChart.data.labels = sMen.labels;
-    charts.moodChart.data.datasets[0].data = sMen.values;
-    charts.moodChart.update();
+  const todaySteps = state.fitness
+    .filter((f) => f.date === TODAY)
+    .reduce((s, r) => s + r.value, 0);
 
-    charts.fitnessOnly.data.labels = sFit.labels;
-    charts.fitnessOnly.data.datasets[0].data = sFit.values;
-    charts.fitnessOnly.update();
+  const pct = Math.min(100, Math.round((todaySteps / (state.goals.steps || 1)) * 100));
+  qs("#goalFillSteps").style.width = pct + "%";
+}
 
-    charts.nutritionOnly.data.labels = sNut.labels;
-    charts.nutritionOnly.data.datasets[0].data = sNut.values;
-    charts.nutritionOnly.update();
+function renderCharts() {
+  const sFit = seriesFromArray(state.fitness);
+  const sNut = seriesFromArray(state.nutrition);
+  const sMen = seriesFromArray(state.mental);
 
-    charts.mentalOnly.data.labels = sMen.labels;
-    charts.mentalOnly.data.datasets[0].data = sMen.values;
-    charts.mentalOnly.update();
+  const updateChart = (chart, labels, values) => {
+    chart.data.labels = labels;
+    chart.data.datasets[0].data = values;
+    chart.update();
+  };
+
+  updateChart(charts.stepsChart, sFit.labels, sFit.values);
+  updateChart(charts.caloriesChart, sNut.labels, sNut.values);
+  updateChart(charts.moodChart, sMen.labels, sMen.values);
+  updateChart(charts.fitnessOnly, sFit.labels, sFit.values);
+  updateChart(charts.nutritionOnly, sNut.labels, sNut.values);
+  updateChart(charts.mentalOnly, sMen.labels, sMen.values);
+}
+
+// ========================================================
+// ➕ ENTRY ADDING + EVENT HANDLERS
+// ========================================================
+function addEntry(type, payload) {
+  if (!payload.date || isNaN(payload.value)) {
+    alert("Please enter valid data");
+    return;
   }
+  const entry = { ...payload, value: Number(payload.value) };
+  state[type].push(entry);
+  saveState();
+  renderStats();
+  renderCharts();
+}
 
-  // --- Add Entries ---
-  function addEntry(type, payload) {
-    if (!payload.date || isNaN(payload.value)) {
-      alert('Please enter valid data');
-      return;
-    }
-    if (type === 'fitness') state.fitness.push({ ...payload, value: Number(payload.value) });
-    if (type === 'nutrition') state.nutrition.push({ ...payload, value: Number(payload.value) });
-    if (type === 'mental') state.mental.push({ ...payload, value: Number(payload.value) });
+// Event Listeners
+qs("#entryAddBtn").addEventListener("click", () => {
+  addEntry(qs("#entryType").value, {
+    date: qs("#entryDate").value,
+    value: qs("#entryValue").value,
+    note: qs("#entryNote").value,
+  });
+  qs("#entryValue").value = "";
+  qs("#entryNote").value = "";
+});
 
+qs("#fitAdd").addEventListener("click", () =>
+  addEntry("fitness", {
+    date: qs("#fitDate").value,
+    value: qs("#fitValue").value,
+    note: qs("#fitNote").value,
+  })
+);
+qs("#nutAdd").addEventListener("click", () =>
+  addEntry("nutrition", {
+    date: qs("#nutDate").value,
+    value: qs("#nutValue").value,
+    note: qs("#nutNote").value,
+  })
+);
+qs("#menAdd").addEventListener("click", () =>
+  addEntry("mental", {
+    date: qs("#menDate").value,
+    value: qs("#menValue").value,
+    note: qs("#menNote").value,
+  })
+);
+
+// Clear Data
+qs("#fitClear").addEventListener("click", () => {
+  if (confirm("Clear all fitness data?")) {
+    state.fitness = [];
     saveState();
     renderStats();
     renderCharts();
   }
-
-  // --- Event Listeners ---
-  qs('#entryAddBtn').addEventListener('click', () => {
-    addEntry(qs('#entryType').value, {
-      date: qs('#entryDate').value,
-      value: qs('#entryValue').value,
-      note: qs('#entryNote').value,
-    });
-    qs('#entryValue').value = '';
-    qs('#entryNote').value = '';
-  });
-
-  qs('#fitAdd').addEventListener('click', () => addEntry('fitness', { date: qs('#fitDate').value, value: qs('#fitValue').value, note: qs('#fitNote').value }));
-  qs('#nutAdd').addEventListener('click', () => addEntry('nutrition', { date: qs('#nutDate').value, value: qs('#nutValue').value, note: qs('#nutNote').value }));
-  qs('#menAdd').addEventListener('click', () => addEntry('mental', { date: qs('#menDate').value, value: qs('#menValue').value, note: qs('#menNote').value }));
-
-  // Clear data buttons
-  qs('#fitClear').addEventListener('click', () => { if (confirm('Clear all fitness data?')) { state.fitness = []; saveState(); renderStats(); renderCharts(); } });
-  qs('#nutClear').addEventListener('click', () => { if (confirm('Clear all nutrition data?')) { state.nutrition = []; saveState(); renderStats(); renderCharts(); } });
-  qs('#menClear').addEventListener('click', () => { if (confirm('Clear all mental data?')) { state.mental = []; saveState(); renderStats(); renderCharts(); } });
-
-  // Save goals/profile
-  qs('#saveGoals').addEventListener('click', () => {
-    state.goals = {
-      steps: Number(qs('#goalSteps').value),
-      calories: Number(qs('#goalCalories').value),
-      mood: Number(qs('#goalMood').value)
-    };
+});
+qs("#nutClear").addEventListener("click", () => {
+  if (confirm("Clear all nutrition data?")) {
+    state.nutrition = [];
     saveState();
-    alert('Goals saved successfully!');
-  });
-
-  qs('#saveProfile').addEventListener('click', () => {
-    state.profile = {
-      name: qs('#profName').value.trim() || 'User',
-      avatar: qs('#profAvatar').value.trim(),
-    };
-    saveState();
-    renderProfile();
-    alert('Profile updated!');
-  });
-
-  // --- Navigation ---
-  function showSection(key) {
-    qsa('.section').forEach(s => s.classList.remove('active'));
-    qs(`#section-${key}`).classList.add('active');
-    qsa('.nav-link').forEach(a => a.classList.toggle('active', a.dataset.section === key));
+    renderStats();
+    renderCharts();
   }
-  qsa('.nav-link').forEach(a => a.addEventListener('click', e => {
+});
+qs("#menClear").addEventListener("click", () => {
+  if (confirm("Clear all mental data?")) {
+    state.mental = [];
+    saveState();
+    renderStats();
+    renderCharts();
+  }
+});
+
+// Save Profile + Goals
+qs("#saveGoals").addEventListener("click", () => {
+  state.goals = {
+    steps: Number(qs("#goalSteps").value),
+    calories: Number(qs("#goalCalories").value),
+    mood: Number(qs("#goalMood").value),
+  };
+  saveState();
+  alert("Goals saved successfully!");
+});
+
+qs("#saveProfile").addEventListener("click", () => {
+  state.profile = {
+    name: qs("#profName").value.trim() || "User",
+    avatar: qs("#profAvatar").value.trim(),
+  };
+  saveState();
+  renderProfile();
+  alert("Profile updated!");
+});
+
+// ========================================================
+// 🧭 NAVIGATION
+// ========================================================
+function showSection(key) {
+  qsa(".section").forEach((s) => s.classList.remove("active"));
+  qs(`#section-${key}`).classList.add("active");
+  qsa(".nav-link").forEach((a) =>
+    a.classList.toggle("active", a.dataset.section === key)
+  );
+}
+qsa(".nav-link").forEach((a) =>
+  a.addEventListener("click", (e) => {
     e.preventDefault();
     showSection(a.dataset.section);
-  }));
+  })
+);
 
-  // --- Initialize App ---
+// ========================================================
+// 🚀 INIT
+// ========================================================
+(async () => {
+  await fetchUserProfile();
   initCharts();
   renderProfile();
   renderStats();
   renderCharts();
+})();
 </script>
+
 </body>
 </html>
