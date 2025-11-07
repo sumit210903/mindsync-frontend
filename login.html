@@ -147,9 +147,9 @@
 
   <script>
     const API_BASE = "https://mindsync-backend-c7v9.onrender.com";
-    const TOKEN_KEY = "token"; // ✅ Consistent token key
+    const TOKEN_KEY = "authToken"; // ✅ matches dashboard
 
-    // ✅ Check if user already logged in (runs once)
+    // ✅ Auto-redirect if already logged in
     document.addEventListener("DOMContentLoaded", async () => {
       const token = localStorage.getItem(TOKEN_KEY);
       if (token && token !== "undefined" && token.trim() !== "") {
@@ -158,14 +158,14 @@
             headers: { Authorization: `Bearer ${token}` },
           });
           if (res.ok) {
-            console.log("✅ Already logged in — redirecting to dashboard...");
+            console.log("✅ User already logged in, redirecting to dashboard...");
             window.location.href = "dashboard.html";
             return;
           } else {
             localStorage.removeItem(TOKEN_KEY);
           }
         } catch (err) {
-          console.error("⚠️ Token verification failed:", err);
+          console.warn("⚠️ Token verification failed:", err);
           localStorage.removeItem(TOKEN_KEY);
         }
       }
