@@ -146,10 +146,11 @@
   </footer>
 
   <script>
-  //  const API_BASE = "https://mindsync-backend-c7v9.onrender.com";
-    const TOKEN_KEY = "authToken"; // ✅ matches dashboard//
-    
-    // ✅ Auto-redirect if already logged in
+    // ✅ Define your backend base URL
+    const API_BASE = "https://mindsync-backend-c7v9.onrender.com";
+    const TOKEN_KEY = "authToken";
+
+    // ✅ Auto-redirect if user already logged in
     document.addEventListener("DOMContentLoaded", async () => {
       const token = localStorage.getItem(TOKEN_KEY);
       if (token && token !== "undefined" && token.trim() !== "") {
