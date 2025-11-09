@@ -41,9 +41,12 @@
       display:flex;align-items:center;gap:12px;flex:1;min-width:260px;
     }
     .profile-avatar{
-      width:56px;height:56px;border-radius:50%;background:#e6f6f0;
-      display:flex;align-items:center;justify-content:center;font-weight:700;
-      color:#006c59;font-size:22px;
+      width:56px;
+      height:56px;
+      border-radius:50%;
+      object-fit:cover;
+      background:#e6f6f0;
+      border:2px solid #006c59;
     }
     .grid{
       display:grid;grid-template-columns:1fr 2fr;gap:18px;align-items:start;
@@ -103,9 +106,9 @@
     <!-- Profile Header -->
     <div class="top-row">
       <div class="profile-card">
-        <div class="profile-avatar" id="avatarEl">U</div>
+        <img id="profileImage" src="default-avatar.png" alt="Profile Photo" class="profile-avatar">
         <div>
-          <strong id="profileName">User</strong>
+          <strong id="profileName">User</strong><br>
           <small id="profileEmail">Welcome to your wellness space</small>
         </div>
       </div>
@@ -149,21 +152,33 @@
     window.location.href = "login.html";
     return;
   }
+
   try {
     const res = await fetch("https://mindsync-backend.onrender.com/api/users/verify", {
       headers: { Authorization: `Bearer ${token}` },
     });
+
     if (res.ok) {
       const data = await res.json();
       const user = data.user || {};
+
       document.getElementById("profileName").textContent = user.name || "New User";
       document.getElementById("profileEmail").textContent = user.email || "Welcome to MindSync!";
-      document.getElementById("avatarEl").textContent = user.name ? user.name.charAt(0).toUpperCase() : "U";
+
+      const profileImage = document.getElementById("profileImage");
+      if (user.photo) {
+        profileImage.src = user.photo; // backend photo URL
+      } else {
+        profileImage.src = "default-avatar.png"; // fallback
+      }
+
     } else {
       localStorage.removeItem("authToken");
       window.location.href = "login.html";
     }
-  } catch (err) { console.error(err); }
+  } catch (err) {
+    console.error("Error verifying user:", err);
+  }
 })();
 
 document.getElementById("todayDate").textContent = new Date().toLocaleDateString();
@@ -171,20 +186,26 @@ document.getElementById("todayDate").textContent = new Date().toLocaleDateString
 // Charts
 new Chart(document.getElementById("fitnessChart"), {
   type:"line",
-  data:{labels:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
-  datasets:[{label:"Steps",data:[3000,4500,5000,7000,6000,8000,9000],borderColor:"#006c59",fill:false}]},
+  data:{
+    labels:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+    datasets:[{label:"Steps",data:[3000,4500,5000,7000,6000,8000,9000],borderColor:"#006c59",fill:false}]
+  },
   options:{responsive:true,maintainAspectRatio:false}
 });
 new Chart(document.getElementById("nutritionChart"), {
   type:"bar",
-  data:{labels:["Carbs","Proteins","Fats"],
-  datasets:[{label:"Nutrients (g)",data:[200,90,50],backgroundColor:["#00b894","#0984e3","#fdcb6e"]}]},
+  data:{
+    labels:["Carbs","Proteins","Fats"],
+    datasets:[{label:"Nutrients (g)",data:[200,90,50],backgroundColor:["#00b894","#0984e3","#fdcb6e"]}]
+  },
   options:{responsive:true,maintainAspectRatio:false}
 });
 new Chart(document.getElementById("mentalChart"), {
   type:"pie",
-  data:{labels:["Happy","Neutral","Stressed"],
-  datasets:[{data:[60,25,15],backgroundColor:["#55efc4","#ffeaa7","#fab1a0"]}]},
+  data:{
+    labels:["Happy","Neutral","Stressed"],
+    datasets:[{data:[60,25,15],backgroundColor:["#55efc4","#ffeaa7","#fab1a0"]}]
+  },
   options:{responsive:true,maintainAspectRatio:false}
 });
 </script>
