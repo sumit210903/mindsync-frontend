@@ -13,82 +13,103 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    * { margin:0; padding:0; box-sizing:border-box; font-family:'Quicksand',sans-serif; }
-    body {
-      background: linear-gradient(135deg, #dff6f0, #b9e5e8, #a7c7e7);
-      color: #2c3e50;
-      min-height: 100vh;
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Quicksand',sans-serif;}
+    body{
+      background:linear-gradient(135deg,#dff6f0,#b9e5e8,#a7c7e7);
+      color:#2c3e50;min-height:100vh;
     }
-    nav {
-      background: rgba(255,255,255,0.95);
-      padding: 12px 6%;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      position:sticky;
-      top:0;
-      z-index:1000;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      gap: 12px;
-      flex-wrap:wrap;
+    nav{
+      background:rgba(255,255,255,0.95);
+      padding:12px 6%;display:flex;justify-content:space-between;align-items:center;
+      position:sticky;top:0;z-index:1000;box-shadow:0 2px 8px rgba(0,0,0,0.08);
+      flex-wrap:wrap;gap:10px;
     }
-    nav h1 { font-size:22px; font-weight:700; color:#006c59; display:flex; align-items:center; gap:8px;}
-    nav h1 i { color:#006c59; font-size:26px; animation:pulse 2s infinite; }
-    nav .nav-right { display:flex; align-items:center; gap:12px; }
-    nav ul { list-style:none; display:flex; gap:18px; align-items:center; }
-    nav ul li a { text-decoration:none; color:#2c3e50; font-size:15px; font-weight:600; display:flex; gap:8px; align-items:center; padding:8px 10px; border-radius:8px;}
-    nav ul li a.active, nav ul li a:hover { color:#fff; background:#006c59; transform:translateY(-1px); }
-    @keyframes pulse { 0%,100% { transform:scale(1);} 50% { transform:scale(1.15);} }
-    .container { padding: 28px 6%; max-width:1200px; margin:0 auto; }
-    .top-row { display:flex; gap:20px; align-items:center; justify-content:space-between; flex-wrap:wrap; margin-bottom:18px; }
-    .profile-card {
-      background:#fff; border-radius:14px; padding:12px 16px; box-shadow:0 8px 18px rgba(0,0,0,0.06);
-      display:flex; gap:12px; align-items:center;
+    nav h1{font-size:22px;font-weight:700;color:#006c59;display:flex;align-items:center;gap:8px;}
+    nav h1 i{color:#006c59;font-size:26px;animation:pulse 2s infinite;}
+    @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15);}}
+    nav ul{list-style:none;display:flex;gap:18px;align-items:center;flex-wrap:wrap;}
+    nav ul li a{
+      text-decoration:none;color:#2c3e50;font-size:15px;font-weight:600;
+      display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;transition:0.3s;
     }
-    .profile-avatar { width:56px; height:56px; border-radius:50%; background:#e6f6f0; display:flex; align-items:center; justify-content:center; font-weight:700; color:#006c59; font-size:22px; overflow:hidden; }
-    .profile-info { display:flex; flex-direction:column; }
-    .profile-info small { color:#666; font-size:12px; }
-    .grid { display:grid; grid-template-columns: 1fr 2fr; gap:18px; align-items:start; }
-    .col { background:#fff; border-radius:14px; padding:16px; box-shadow:0 8px 18px rgba(0,0,0,0.06); }
-    .col h2 { color:#006c59; margin-bottom:8px; font-size:18px; }
-    .tiles { display:flex; gap:12px; margin-top:8px; flex-wrap:wrap; }
-    .tile { flex:1; min-width:120px; background:#f8fffb; border-radius:10px; padding:12px; text-align:center; transition:0.3s; }
-    .tile:hover { transform:scale(1.05); background:#e9fff5; }
-    .tile strong { display:block; font-size:18px; margin-top:6px; }
-    .charts { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px; }
-    .chart-box { height:260px; padding:10px; }
-    button.btn { background:#006c59; color:#fff; padding:8px 12px; border-radius:10px; border:none; cursor:pointer; font-weight:600; }
-    footer { background:#006c59; color:#fff; text-align:center; padding:18px 8px; margin-top:26px; border-radius:10px; }
-    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } .charts { grid-template-columns: 1fr; } nav ul { display:none; } .menu-toggle { display:block; } }
+    nav ul li a.active,nav ul li a:hover{color:#fff;background:#006c59;transform:translateY(-1px);}
+
+    .container{padding:24px 6%;max-width:1200px;margin:0 auto;}
+    .top-row{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;margin-bottom:18px;}
+    .profile-card{
+      background:#fff;border-radius:14px;padding:12px 16px;box-shadow:0 8px 18px rgba(0,0,0,0.06);
+      display:flex;align-items:center;gap:12px;flex:1;min-width:260px;
+    }
+    .profile-avatar{
+      width:56px;height:56px;border-radius:50%;background:#e6f6f0;
+      display:flex;align-items:center;justify-content:center;font-weight:700;
+      color:#006c59;font-size:22px;
+    }
+    .grid{
+      display:grid;grid-template-columns:1fr 2fr;gap:18px;align-items:start;
+    }
+    .col{
+      background:#fff;border-radius:14px;padding:16px;
+      box-shadow:0 8px 18px rgba(0,0,0,0.06);
+    }
+    .col h2{color:#006c59;margin-bottom:8px;font-size:18px;}
+    .tiles{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;}
+    .tile{
+      flex:1;min-width:110px;background:#f8fffb;border-radius:10px;
+      padding:12px;text-align:center;transition:0.3s;
+    }
+    .tile:hover{transform:scale(1.05);background:#e9fff5;}
+    .tile strong{display:block;font-size:18px;margin-top:6px;}
+    .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-top:14px;}
+    .chart-box{height:260px;padding:10px;}
+    button.btn{background:#006c59;color:#fff;padding:8px 12px;border-radius:10px;border:none;cursor:pointer;font-weight:600;}
+    footer{background:#006c59;color:#fff;text-align:center;padding:18px 8px;margin-top:26px;border-radius:10px;}
+
+    /* -------- Responsive Fixes -------- */
+    @media (max-width: 992px){
+      .grid{grid-template-columns:1fr;}
+      nav ul{gap:10px;}
+    }
+    @media (max-width: 768px){
+      nav{flex-direction:column;align-items:flex-start;}
+      nav ul{width:100%;flex-wrap:wrap;justify-content:center;margin-top:10px;}
+      .profile-card{flex-direction:row;justify-content:flex-start;}
+      .charts{grid-template-columns:1fr;}
+    }
+    @media (max-width: 480px){
+      .profile-avatar{width:46px;height:46px;font-size:18px;}
+      .tile strong{font-size:16px;}
+      .col h2{font-size:16px;}
+      footer{font-size:13px;padding:14px 6px;}
+    }
   </style>
 </head>
-<body>
 
+<body>
   <!-- Navbar -->
   <nav>
     <h1><i class="fa-solid fa-brain"></i> MindSync</h1>
-    <div class="nav-right">
-      <ul>
-        <li><a href="dashboard.html" class="active"><i class="fa-solid fa-house"></i> Dashboard</a></li>
-        <li><a href="wellness.html"><i class="fa-solid fa-heart-pulse"></i> Wellness</a></li>
-        <li><a href="fitness.html"><i class="fa-solid fa-dumbbell"></i> Fitness</a></li>
-        <li><a href="nutrition.html"><i class="fa-solid fa-utensils"></i> Nutrition</a></li>
-        <li><a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a></li>
-        <li><a href="logout.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
-      </ul>
-    </div>
+    <ul>
+      <li><a href="dashboard.html" class="active"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+      <li><a href="wellness.html"><i class="fa-solid fa-heart-pulse"></i> Wellness</a></li>
+      <li><a href="fitness.html"><i class="fa-solid fa-dumbbell"></i> Fitness</a></li>
+      <li><a href="nutrition.html"><i class="fa-solid fa-utensils"></i> Nutrition</a></li>
+      <li><a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a></li>
+      <li><a href="logout.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+    </ul>
   </nav>
 
   <div class="container">
-    <!-- Top Profile Row -->
+    <!-- Profile Header -->
     <div class="top-row">
       <div class="profile-card">
         <div class="profile-avatar" id="avatarEl">U</div>
-        <div class="profile-info">
+        <div>
           <strong id="profileName">User</strong>
           <small id="profileEmail">Welcome to your wellness space</small>
         </div>
       </div>
+
       <div class="profile-card" style="justify-content:flex-end;">
         <div style="text-align:right;">
           <div class="muted">Today's date</div>
@@ -97,7 +118,7 @@
       </div>
     </div>
 
-    <!-- Overview Section -->
+    <!-- Dashboard -->
     <div class="grid">
       <div class="col">
         <h2>Overview</h2>
@@ -122,23 +143,16 @@
   </div>
 
 <script>
-/* ===========================
-   🔐 AUTH CHECK FOR LOGIN/SIGNUP
-=========================== */
 (async function authCheck() {
   const token = localStorage.getItem("authToken");
   if (!token) {
-    console.warn("No token found — redirecting to login.");
     window.location.href = "login.html";
     return;
   }
-
   try {
     const res = await fetch("https://mindsync-backend.onrender.com/api/users/verify", {
       headers: { Authorization: `Bearer ${token}` },
     });
-
-    // Works for both login and signup users
     if (res.ok) {
       const data = await res.json();
       const user = data.user || {};
@@ -146,50 +160,33 @@
       document.getElementById("profileEmail").textContent = user.email || "Welcome to MindSync!";
       document.getElementById("avatarEl").textContent = user.name ? user.name.charAt(0).toUpperCase() : "U";
     } else {
-      console.warn("Token invalid or expired, logging out.");
       localStorage.removeItem("authToken");
       window.location.href = "login.html";
     }
-  } catch (err) {
-    console.error("Verification failed:", err);
-  }
+  } catch (err) { console.error(err); }
 })();
 
-/* ===========================
-   📅 DATE + CHARTS
-=========================== */
 document.getElementById("todayDate").textContent = new Date().toLocaleDateString();
 
-// Fitness Chart
+// Charts
 new Chart(document.getElementById("fitnessChart"), {
-  type: "line",
-  data: {
-    labels: ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
-    datasets: [{ label:"Steps", data:[3000,4500,5000,7000,6000,8000,9000], borderColor:"#006c59", fill:false }]
-  },
-  options: { responsive:true, maintainAspectRatio:false }
+  type:"line",
+  data:{labels:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+  datasets:[{label:"Steps",data:[3000,4500,5000,7000,6000,8000,9000],borderColor:"#006c59",fill:false}]},
+  options:{responsive:true,maintainAspectRatio:false}
 });
-
-// Nutrition Chart
 new Chart(document.getElementById("nutritionChart"), {
-  type: "bar",
-  data: {
-    labels:["Carbs","Proteins","Fats"],
-    datasets:[{ label:"Nutrients (g)", data:[200,90,50], backgroundColor:["#00b894","#0984e3","#fdcb6e"] }]
-  },
-  options:{ responsive:true, maintainAspectRatio:false }
+  type:"bar",
+  data:{labels:["Carbs","Proteins","Fats"],
+  datasets:[{label:"Nutrients (g)",data:[200,90,50],backgroundColor:["#00b894","#0984e3","#fdcb6e"]}]},
+  options:{responsive:true,maintainAspectRatio:false}
 });
-
-// Mental Health Chart
 new Chart(document.getElementById("mentalChart"), {
   type:"pie",
-  data:{
-    labels:["Happy","Neutral","Stressed"],
-    datasets:[{ data:[60,25,15], backgroundColor:["#55efc4","#ffeaa7","#fab1a0"] }]
-  },
-  options:{ responsive:true, maintainAspectRatio:false }
+  data:{labels:["Happy","Neutral","Stressed"],
+  datasets:[{data:[60,25,15],backgroundColor:["#55efc4","#ffeaa7","#fab1a0"]}]},
+  options:{responsive:true,maintainAspectRatio:false}
 });
 </script>
-
 </body>
 </html>
