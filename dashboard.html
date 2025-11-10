@@ -146,68 +146,77 @@
   </div>
 
 <script>
-(async function authCheck() {
-  const token = localStorage.getItem("authToken");
+document.addEventListener("DOMContentLoaded", async () => {
+  const token = localStorage.getItem("token");
   if (!token) {
     window.location.href = "login.html";
     return;
   }
 
   try {
-    const res = await fetch("https://mindsync-backend.onrender.com/api/users/verify", {
-      headers: { Authorization: `Bearer ${token}` },
+    const res = await fetch("https://mindsync-backend-c7v9.onrender.com/api/users/verify", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
 
-    if (res.ok) {
-      const data = await res.json();
-      const user = data.user || {};
+    const data = await res.json();
 
-      document.getElementById("profileName").textContent = user.name || "New User";
-      document.getElementById("profileEmail").textContent = user.email || "Welcome to MindSync!";
-
-      const profileImage = document.getElementById("profileImage");
-      if (user.photo) {
-        profileImage.src = user.photo; // backend photo URL
-      } else {
-        profileImage.src = "default-avatar.png"; // fallback
-      }
-
-    } else {
-      localStorage.removeItem("authToken");
+    if (!res.ok || !data.success || !data.user) {
+      localStorage.removeItem("token");
       window.location.href = "login.html";
+      return;
     }
-  } catch (err) {
-    console.error("Error verifying user:", err);
+
+    const user = data.user;
+    document.getElementById("profileName").textContent = user.name || "User";
+    document.getElementById("profileImage").src =
+      user.profilePic || "default-avatar.png";
+
+  } catch (error) {
+    console.error("❌ Verification error:", error);
+    localStorage.removeItem("token");
+    window.location.href = "login.html";
   }
-})();
 
-document.getElementById("todayDate").textContent = new Date().toLocaleDateString();
+  document.getElementById("todayDate").textContent = new Date().toLocaleDateString();
 
-// Charts
-new Chart(document.getElementById("fitnessChart"), {
-  type:"line",
-  data:{
-    labels:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
-    datasets:[{label:"Steps",data:[3000,4500,5000,7000,6000,8000,9000],borderColor:"#006c59",fill:false}]
-  },
-  options:{responsive:true,maintainAspectRatio:false}
-});
-new Chart(document.getElementById("nutritionChart"), {
-  type:"bar",
-  data:{
-    labels:["Carbs","Proteins","Fats"],
-    datasets:[{label:"Nutrients (g)",data:[200,90,50],backgroundColor:["#00b894","#0984e3","#fdcb6e"]}]
-  },
-  options:{responsive:true,maintainAspectRatio:false}
-});
-new Chart(document.getElementById("mentalChart"), {
-  type:"pie",
-  data:{
-    labels:["Happy","Neutral","Stressed"],
-    datasets:[{data:[60,25,15],backgroundColor:["#55efc4","#ffeaa7","#fab1a0"]}]
-  },
-  options:{responsive:true,maintainAspectRatio:false}
+  new Chart(document.getElementById("fitnessChart"), {
+    type: "line",
+    data: {
+      labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      datasets: [
+        { label: "Steps", data: [3000, 4500, 5000, 7000, 6000, 8000, 9000], borderColor: "#006c59", fill: false },
+      ],
+    },
+    options: { responsive: true, maintainAspectRatio: false },
+  });
+
+  new Chart(document.getElementById("nutritionChart"), {
+    type: "bar",
+    data: {
+      labels: ["Carbs", "Proteins", "Fats"],
+      datasets: [
+        { label: "Nutrients (g)", data: [200, 90, 50], backgroundColor: ["#00b894", "#0984e3", "#fdcb6e"] },
+      ],
+    },
+    options: { responsive: true, maintainAspectRatio: false },
+  });
+
+  new Chart(document.getElementById("mentalChart"), {
+    type: "pie",
+    data: {
+      labels: ["Happy", "Neutral", "Stressed"],
+      datasets: [
+        { data: [60, 25, 15], backgroundColor: ["#55efc4", "#ffeaa7", "#fab1a0"] },
+      ],
+    },
+    options: { responsive: true, maintainAspectRatio: false },
+  });
 });
 </script>
+
 </body>
 </html>
